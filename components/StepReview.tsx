@@ -50,7 +50,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
     <div className="mt-6 animate-slide-down">
         <div className="rounded-3xl border-2 border-brand-500 bg-white shadow-2xl shadow-brand-900/10 overflow-hidden">
             
-            <div className="bg-brand-900 p-6 md:p-8 text-white relative overflow-hidden">
+            <div className="bg-brand-900 p-5 sm:p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-500/20 to-transparent"></div>
                 <div className="relative z-10">
                     <h3 className="flex items-center gap-3 text-2xl font-black tracking-tight">
@@ -60,10 +60,10 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                 </div>
             </div>
 
-            <div className="p-6 md:p-8 space-y-10">
+            <div className="p-4 sm:p-6 md:p-8 space-y-6 sm:space-y-10">
                 
                 {/* 1. Dados do Cliente e Endereço */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                     <div className="space-y-4">
                         <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
                              <User className="h-5 w-5 text-slate-300" /> Dados do Titular
@@ -149,50 +149,52 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                          <Wifi className="h-5 w-5 text-slate-300" /> Produtos Selecionados
                     </h4>
                     
-                    <div className="rounded-3xl border-2 border-slate-200 overflow-hidden">
-                        <table className="w-full text-sm text-left">
+                    <div className="rounded-2xl sm:rounded-3xl border-2 border-slate-200 overflow-hidden">
+                        <div className="overflow-x-auto">
+                        <table className="w-full text-sm text-left min-w-[320px]">
                             <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-xs">
                                 <tr>
-                                    <th className="p-5">Produto / Serviço</th>
-                                    <th className="p-5 text-right">Valor Mensal</th>
+                                    <th className="p-3 sm:p-5">Produto / Serviço</th>
+                                    <th className="p-3 sm:p-5 text-right whitespace-nowrap">Valor Mensal</th>
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-slate-100">
                                 {/* Plano Base */}
                                 <tr className="bg-white">
-                                    <td className="p-5">
-                                        <p className="font-black text-slate-900 text-xl tracking-tight">{state.selectedPlan?.name} {state.selectedPlan?.speed} MEGA</p>
-                                        <p className="text-sm text-slate-500 mt-2 flex items-center gap-3 font-medium">
-                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500"/> Wi-Fi 6 Incluso</span>
-                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500"/> Instalação Grátis</span>
+                                    <td className="p-3 sm:p-5">
+                                        <p className="font-black text-slate-900 text-base sm:text-xl tracking-tight">{state.selectedPlan?.name} {state.selectedPlan?.speed} MEGA</p>
+                                        <p className="text-xs sm:text-sm text-slate-500 mt-1 sm:mt-2 flex flex-wrap items-center gap-2 sm:gap-3 font-medium">
+                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500"/> Wi-Fi 6 Incluso</span>
+                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-3.5 w-3.5 text-emerald-500"/> Instalação Grátis</span>
                                         </p>
                                     </td>
-                                    <td className="p-5 text-right font-black text-slate-900 text-xl tracking-tight">R$ {state.selectedPlan?.price.toFixed(2).replace('.', ',')}</td>
+                                    <td className="p-3 sm:p-5 text-right font-black text-slate-900 text-base sm:text-xl tracking-tight whitespace-nowrap">R$ {state.selectedPlan?.price.toFixed(2).replace('.', ',')}</td>
                                 </tr>
-                                
+
                                 {/* Adicionais */}
                                 {state.additionalServices.map(svc => (
                                     <tr key={svc.id} className="bg-white">
-                                        <td className="p-5">
-                                            <p className="font-bold text-slate-800 text-base">{svc.name}</p>
-                                            <p className="text-sm text-slate-500 mt-1 font-medium">{svc.description}</p>
+                                        <td className="p-3 sm:p-5">
+                                            <p className="font-bold text-slate-800 text-sm sm:text-base">{svc.name}</p>
+                                            <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">{svc.description}</p>
                                         </td>
-                                        <td className="p-5 text-right font-bold text-indigo-600 text-base">+ R$ {svc.price.toFixed(2).replace('.', ',')}</td>
+                                        <td className="p-3 sm:p-5 text-right font-bold text-indigo-600 text-sm sm:text-base whitespace-nowrap">+ R$ {svc.price.toFixed(2).replace('.', ',')}</td>
                                     </tr>
                                 ))}
                             </tbody>
                             <tfoot className="bg-slate-900 text-white">
                                 <tr>
-                                    <td className="p-6 font-bold uppercase text-sm tracking-widest text-slate-400">Total Mensal</td>
-                                    <td className="p-6 text-right font-black text-3xl tracking-tighter">R$ {finalTotal.toFixed(2).replace('.', ',')}</td>
+                                    <td className="p-4 sm:p-6 font-bold uppercase text-xs sm:text-sm tracking-widest text-slate-400">Total Mensal</td>
+                                    <td className="p-4 sm:p-6 text-right font-black text-2xl sm:text-3xl tracking-tighter whitespace-nowrap">R$ {finalTotal.toFixed(2).replace('.', ',')}</td>
                                 </tr>
                             </tfoot>
                         </table>
+                        </div>
                     </div>
                 </div>
 
                 {/* 3. Financeiro e Agendamento */}
-                <div className="grid md:grid-cols-2 gap-6">
+                <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                      <div className="space-y-4">
                         <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
                              <CreditCard className="h-5 w-5 text-slate-300" /> Detalhes Financeiros
