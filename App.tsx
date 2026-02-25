@@ -16,7 +16,7 @@ const App = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 font-sans text-slate-900 selection:bg-brand-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 pb-36 lg:pb-12 font-sans text-slate-900 selection:bg-brand-500 selection:text-white">
       
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-900 shadow-xl backdrop-blur-md">
@@ -50,12 +50,12 @@ const App = () => {
       </header>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mb-8 text-center md:text-left">
-          <h1 className="text-3xl font-black tracking-tight text-slate-900 sm:text-4xl">
+      <main className="mx-auto max-w-7xl px-3 py-5 sm:px-6 sm:py-8 lg:px-8">
+        <div className="mb-6 text-center md:text-left">
+          <h1 className="text-2xl font-black tracking-tight text-slate-900 sm:text-3xl lg:text-4xl">
             Contrate sua Internet
           </h1>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-1.5 text-sm sm:text-base text-slate-500">
             Siga os passos abaixo para ter a melhor conexão na sua casa.
           </p>
         </div>

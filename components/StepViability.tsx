@@ -181,9 +181,9 @@ export const StepViability = () => {
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* 1. Phone Input (First) */}
-            <div className="mb-8">
+            <div className="mb-6">
                 <label className="mb-2 block text-sm font-bold text-slate-700">Seu WhatsApp / Celular</label>
-                <div className="relative max-w-md">
+                <div className="relative">
                     <input 
                         type="tel"
                         value={phone}
@@ -199,27 +199,27 @@ export const StepViability = () => {
             {/* 2. Residence Type Toggles */}
             <div className="mb-8">
                 <label className="mb-3 block text-sm font-bold text-slate-700">Onde será a instalação?</label>
-                <div className="grid grid-cols-3 gap-4">
-                    <button 
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
+                    <button
                         onClick={() => setResidenceType('casa')}
-                        className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all duration-300 ${residenceType === 'casa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
+                        className={`flex flex-col items-center justify-center gap-2 sm:gap-3 rounded-2xl border-2 p-3 sm:p-5 transition-all duration-300 ${residenceType === 'casa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
                     >
-                        <Home className="h-8 w-8" />
-                        <span className="text-sm font-bold">Casa</span>
+                        <Home className="h-6 w-6 sm:h-8 sm:w-8" />
+                        <span className="text-xs sm:text-sm font-bold">Casa</span>
                     </button>
-                    <button 
+                    <button
                         onClick={() => setResidenceType('condominio')}
-                        className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all duration-300 ${residenceType === 'condominio' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
+                        className={`flex flex-col items-center justify-center gap-2 sm:gap-3 rounded-2xl border-2 p-3 sm:p-5 transition-all duration-300 ${residenceType === 'condominio' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
                     >
-                        <Building2 className="h-8 w-8" />
-                        <span className="text-sm font-bold">Prédio/Condo</span>
+                        <Building2 className="h-6 w-6 sm:h-8 sm:w-8" />
+                        <span className="text-xs sm:text-sm font-bold leading-tight text-center">Prédio/Condo</span>
                     </button>
-                    <button 
+                    <button
                         onClick={() => setResidenceType('empresa')}
-                        className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all duration-300 ${residenceType === 'empresa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
+                        className={`flex flex-col items-center justify-center gap-2 sm:gap-3 rounded-2xl border-2 p-3 sm:p-5 transition-all duration-300 ${residenceType === 'empresa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
                     >
-                        <Briefcase className="h-8 w-8" />
-                        <span className="text-sm font-bold">Empresa</span>
+                        <Briefcase className="h-6 w-6 sm:h-8 sm:w-8" />
+                        <span className="text-xs sm:text-sm font-bold">Empresa</span>
                     </button>
                 </div>
             </div>
@@ -327,13 +327,13 @@ export const StepViability = () => {
                 </div>
             )}
 
-            <div className="mt-10 flex justify-end">
+            <div className="mt-8 flex flex-col sm:flex-row sm:justify-end">
                 <button
                     onClick={checkViability}
                     disabled={loading || phone.length < 14}
-                    className="group relative flex items-center justify-center gap-3 overflow-hidden rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                    className="group relative flex w-full sm:w-auto items-center justify-center gap-3 overflow-hidden rounded-2xl bg-brand-600 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                 >
-                    {loading && <Loader2 className="h-6 w-6 animate-spin" />}
+                    {loading && <Loader2 className="h-5 w-5 animate-spin" />}
                     Consultar Viabilidade
                 </button>
             </div>

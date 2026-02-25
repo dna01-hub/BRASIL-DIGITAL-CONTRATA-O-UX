@@ -94,7 +94,7 @@ export const StepData = () => {
                 key={i}
                 onClick={() => !isPast && handleDateSelect(i)}
                 disabled={isPast}
-                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all
+                className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-medium transition-all
                     ${isSelected ? 'bg-brand-600 text-white shadow-md' : ''}
                     ${!isSelected && !isPast ? 'hover:bg-brand-100 text-slate-700 hover:text-brand-700' : ''}
                     ${isPast ? 'text-slate-300 cursor-not-allowed' : 'cursor-pointer'}
@@ -206,25 +206,25 @@ export const StepData = () => {
                         <Calendar className="h-5 w-5 text-slate-300" /> Agendamento da Instalação
                     </h4>
                     
-                    <div className="flex flex-col md:flex-row gap-8">
+                    <div className="flex flex-col md:flex-row gap-6 md:gap-8">
                         {/* Calendar Component */}
-                        <div className="flex-1 max-w-sm mx-auto md:mx-0">
-                            <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-sm p-5">
+                        <div className="flex-1 md:max-w-sm md:mx-0">
+                            <div className="bg-white border-2 border-slate-100 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-5">
                                 {/* Header */}
-                                <div className="flex items-center justify-between mb-6">
+                                <div className="flex items-center justify-between mb-4 sm:mb-6">
                                     <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                                         <ChevronLeft className="h-5 w-5 text-slate-600" />
                                     </button>
-                                    <h5 className="font-black text-slate-800 capitalize text-lg tracking-tight">
+                                    <h5 className="font-black text-slate-800 capitalize text-sm sm:text-base tracking-tight">
                                         {currentMonth.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
                                     </h5>
                                     <button onClick={() => changeMonth(1)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                                         <ChevronRight className="h-5 w-5 text-slate-600" />
                                     </button>
                                 </div>
-                                
+
                                 {/* Weekdays */}
-                                <div className="grid grid-cols-7 mb-3">
+                                <div className="grid grid-cols-7 mb-2">
                                     {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
                                         <div key={i} className="text-center text-xs font-black text-slate-400 py-1">
                                             {day}
@@ -233,7 +233,7 @@ export const StepData = () => {
                                 </div>
 
                                 {/* Days Grid */}
-                                <div className="grid grid-cols-7 gap-1">
+                                <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
                                     {renderCalendar()}
                                 </div>
                             </div>
@@ -302,12 +302,12 @@ export const StepData = () => {
                                 <CalendarDays className="h-5 w-5 text-brand-500"/> 
                                 Melhor dia para vencimento
                             </label>
-                            <div className="flex flex-wrap gap-3">
+                            <div className="flex flex-wrap gap-2 sm:gap-3">
                                 {dueDates.map(day => (
                                     <button
                                         key={day}
                                         onClick={() => dispatch({type: 'SET_PAYMENT', payload: { ...state.paymentMethod ? { method: state.paymentMethod } : { method: 'boleto' }, date: day } as any})}
-                                        className={`flex h-14 w-14 items-center justify-center rounded-2xl border-2 font-black text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
+                                        className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
                                         {day}
                                     </button>
@@ -351,13 +351,13 @@ export const StepData = () => {
                 </section>
 
                 {/* Continue Button */}
-                <div className="pt-8 flex justify-end">
+                <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row sm:justify-end">
                     <button
                         onClick={handleNext}
                         disabled={!isFormValid}
-                        className="group flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                        className="group w-full sm:w-auto flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
-                        Revisar Pedido <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
+                        Revisar Pedido <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" />
                     </button>
                 </div>
 
