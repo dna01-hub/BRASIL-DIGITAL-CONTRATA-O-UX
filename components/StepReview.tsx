@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useOrder } from '../OrderContext';
 import { api } from '../services/api';
 import { Lock, FileText, CheckCircle2, MapPin, Calendar, CreditCard, User, Loader2, Wifi, Info, Phone, Mail } from 'lucide-react';
@@ -11,6 +11,15 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
   const { state } = useOrder();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const topRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (state.step === 5) {
+      setTimeout(() => {
+        topRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
+    }
+  }, [state.step]);
 
   const isActive = state.step === 5;
   if (state.step < 5) return null;
@@ -47,7 +56,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
   };
 
   return (
-    <div className="mt-6 animate-slide-down">
+    <div ref={topRef} className="mt-6 animate-slide-down">
         <div className="rounded-3xl border-2 border-brand-500 bg-white shadow-2xl shadow-brand-900/10 overflow-hidden">
             
             <div className="bg-brand-900 p-5 sm:p-6 md:p-8 text-white relative overflow-hidden">
@@ -75,16 +84,6 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                                     <dd className="font-black text-slate-900 text-lg">{state.customer?.nome}</dd>
                                 </div>
                                 
-                                <div>
-                                    <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CPF</dt>
-                                    <dd className="font-bold text-slate-900">{state.customer?.cpfCnpj}</dd>
-                                </div>
-
-                                <div>
-                                    <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Data Nasc.</dt>
-                                    <dd className="font-bold text-slate-900">{formatDate(state.customer?.dataNascimento)}</dd>
-                                </div>
-
                                 <div className="sm:col-span-2 pt-4 border-t border-slate-200/60 mt-2">
                                     <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Canais de Contato</dt>
                                     <dd className="space-y-2.5">

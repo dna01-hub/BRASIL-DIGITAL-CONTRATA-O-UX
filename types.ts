@@ -102,4 +102,5 @@ export type OrderAction =
   | { type: 'SET_FILES'; payload: Partial<OrderFiles> } // New action for files
   | { type: 'SET_ANALYSIS'; payload: { status: OrderState['analysisStatus']; tax: number } }
   | { type: 'SET_SCHEDULING'; payload: Scheduling }
-  | { type: 'SET_PAYMENT'; payload: { method: 'credit_card' | 'boleto'; date: string } };
+  | { type: 'SET_PAYMENT'; payload: { method: 'credit_card' | 'boleto'; date: string } }
+  | { type: 'SET_DUE_DATE'; payload: string };

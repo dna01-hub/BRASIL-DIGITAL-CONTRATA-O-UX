@@ -83,6 +83,8 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
       return { ...state, scheduling: action.payload };
     case 'SET_PAYMENT':
       return { ...state, paymentMethod: action.payload.method, dueDate: action.payload.date };
+    case 'SET_DUE_DATE':
+      return { ...state, dueDate: action.payload };
     default:
       return state;
   }

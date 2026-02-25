@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { useOrder } from '../OrderContext';
 import { Calendar, CreditCard, User, CheckCircle2, ArrowRight, CalendarDays, AlertCircle, Briefcase, ChevronLeft, ChevronRight, Clock, Check } from 'lucide-react';
 
@@ -7,7 +7,6 @@ export const StepData = () => {
   const [formData, setFormData] = useState({
       nome: state.customer?.nome || '',
       email: state.customer?.email || '',
-      dataNascimento: state.customer?.dataNascimento || '',
       telefoneSecundario: state.customer?.telefone || '',
   });
   const [date, setDate] = useState('');
@@ -20,11 +19,12 @@ export const StepData = () => {
   const isCompleted = state.step > 4;
   const isDisabled = state.step < 4;
 
-  const handlePhoneMask = (val: string) => {
-    return val.replace(/\D/g,'')
-      .replace(/^(\d{2})(\d)/g,"($1) $2")
-      .replace(/(\d)(\d{4})$/,"$1-$2")
-      .slice(0, 15);
+  const handlePhoneMask = (val: string): string => {
+    const digits = val.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 2) return digits.length ? `(${digits}` : '';
+    if (digits.length <= 6) return `(${digits.slice(0,2)}) ${digits.slice(2)}`;
+    if (digits.length <= 10) return `(${digits.slice(0,2)}) ${digits.slice(2,6)}-${digits.slice(6)}`;
+    return `(${digits.slice(0,2)}) ${digits.slice(2,7)}-${digits.slice(7)}`;
   };
 
   const handleNext = () => {
@@ -32,8 +32,9 @@ export const StepData = () => {
      dispatch({
          type: 'SET_CUSTOMER',
          payload: {
-             ...formData,
-             telefone: formData.telefoneSecundario
+             nome: formData.nome,
+             email: formData.email,
+             telefone: formData.telefoneSecundario,
          }
      });
      dispatch({
@@ -110,12 +111,11 @@ export const StepData = () => {
 
   const dueDates = ['05', '10', '15', '20', '25'];
 
-  const isFormValid = 
-      formData.nome && 
-      formData.email && 
-      formData.dataNascimento && 
+  const isFormValid =
+      formData.nome &&
+      formData.email &&
       formData.telefoneSecundario &&
-      date && 
+      date &&
       selectedTime &&
       state.paymentMethod;
 
@@ -146,25 +146,14 @@ export const StepData = () => {
                     <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
                         <User className="h-5 w-5 text-slate-300" /> Dados Pessoais
                     </h4>
-                    <div className="grid gap-5 md:grid-cols-2">
-                        <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
-                            <input 
-                                type="text" 
-                                value={formData.nome} 
-                                onChange={e => setFormData({...formData, nome: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Data de Nascimento</label>
-                            <input 
-                                type="date" 
-                                value={formData.dataNascimento} 
-                                onChange={e => setFormData({...formData, dataNascimento: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
-                            />
-                        </div>
+                    <div>
+                        <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
+                        <input
+                            type="text"
+                            value={formData.nome}
+                            onChange={e => setFormData({...formData, nome: e.target.value})}
+                            className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                        />
                     </div>
                 </section>
 
@@ -306,7 +295,7 @@ export const StepData = () => {
                                 {dueDates.map(day => (
                                     <button
                                         key={day}
-                                        onClick={() => dispatch({type: 'SET_PAYMENT', payload: { ...state.paymentMethod ? { method: state.paymentMethod } : { method: 'boleto' }, date: day } as any})}
+                                        onClick={() => dispatch({ type: 'SET_DUE_DATE', payload: day })}
                                         className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
                                         {day}
