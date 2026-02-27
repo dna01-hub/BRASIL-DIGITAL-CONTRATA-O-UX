@@ -56,13 +56,13 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
   };
 
   return (
-    <div ref={topRef} className="mt-6 animate-slide-down">
-        <div className="rounded-3xl border-2 border-brand-500 bg-white shadow-2xl shadow-brand-900/10 overflow-hidden">
-            
-            <div className="bg-brand-900 p-5 sm:p-6 md:p-8 text-white relative overflow-hidden">
+    <div ref={topRef} className="mt-4 animate-slide-down">
+        <div className="rounded-2xl border border-brand-400 bg-white shadow-lg shadow-brand-900/10 overflow-hidden">
+
+            <div className="bg-brand-900 p-4 sm:p-5 md:p-6 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-500/20 to-transparent"></div>
                 <div className="relative z-10">
-                    <h3 className="flex items-center gap-3 text-2xl font-black tracking-tight">
+                    <h3 className="flex items-center gap-2 text-lg sm:text-xl font-bold tracking-tight">
                         <FileText className="h-7 w-7 text-brand-400" /> Resumo do Contrato
                     </h3>
                     <p className="mt-2 text-slate-300 font-medium">Verifique todos os detalhes da sua contratação abaixo.</p>
@@ -74,7 +74,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                 {/* 1. Dados do Cliente e Endereço */}
                 <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                     <div className="space-y-4">
-                        <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
+                        <h4 className="text-xs font-semibold uppercase text-slate-400 tracking-widest flex items-center gap-2">
                              <User className="h-5 w-5 text-slate-300" /> Dados do Titular
                         </h4>
                         <div className="bg-slate-50 p-5 rounded-3xl border-2 border-slate-100 text-sm h-full">
@@ -115,7 +115,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                         </div>
                     </div>
                     <div className="space-y-4">
-                        <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
+                        <h4 className="text-xs font-semibold uppercase text-slate-400 tracking-widest flex items-center gap-2">
                              <MapPin className="h-5 w-5 text-slate-300" /> Endereço de Instalação
                         </h4>
                         <div className="bg-slate-50 p-5 rounded-3xl border-2 border-slate-100 text-sm h-full flex flex-col justify-center">
@@ -195,7 +195,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                 {/* 3. Financeiro e Agendamento */}
                 <div className="grid gap-4 sm:gap-6 md:grid-cols-2">
                      <div className="space-y-4">
-                        <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
+                        <h4 className="text-xs font-semibold uppercase text-slate-400 tracking-widest flex items-center gap-2">
                              <CreditCard className="h-5 w-5 text-slate-300" /> Detalhes Financeiros
                         </h4>
                         <div className="bg-white p-5 rounded-3xl border-2 border-slate-200 text-sm space-y-4">
@@ -217,7 +217,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                      </div>
 
                      <div className="space-y-4">
-                        <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
+                        <h4 className="text-xs font-semibold uppercase text-slate-400 tracking-widest flex items-center gap-2">
                              <Calendar className="h-5 w-5 text-slate-300" /> Agendamento
                         </h4>
                         <div className="bg-white p-5 rounded-3xl border-2 border-slate-200 text-sm flex flex-col justify-between h-full">

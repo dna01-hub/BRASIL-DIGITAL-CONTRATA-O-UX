@@ -120,30 +120,30 @@ export const StepData = () => {
       state.paymentMethod;
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl border bg-white transition-all duration-500 ${isActive ? 'ring-4 ring-brand-500/20 shadow-2xl border-brand-500 mt-6' : 'border-slate-200 shadow-sm mt-4'}`}>
-         
-         <div 
-            className={`flex items-center justify-between p-6 md:p-8 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50' : 'opacity-50 cursor-not-allowed'}`}
+    <div className={`relative overflow-hidden rounded-2xl border bg-white transition-all duration-500 ${isActive ? 'ring-2 ring-brand-500/20 shadow-lg border-brand-400' : 'border-slate-200 shadow-sm'}`}>
+
+         <div
+            className={`flex items-center justify-between p-4 sm:p-5 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50/70' : 'opacity-50 cursor-not-allowed'}`}
             onClick={() => isCompleted && dispatch({type: 'SET_STEP', payload: 4})}
          >
-            <div className="flex items-center gap-5">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
-                    {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : '4'}
+            <div className="flex items-center gap-3 md:gap-4">
+                <div className={`flex h-9 w-9 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-md shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
+                    {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : '4'}
                 </div>
                 <div>
-                    <h3 className={`text-xl font-black tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Dados para Contrato</h3>
-                    {isCompleted && <p className="text-sm text-emerald-600 font-bold mt-1">Todos os dados preenchidos</p>}
+                    <h3 className={`text-sm sm:text-base font-semibold tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Dados para Contrato</h3>
+                    {isCompleted && <p className="text-xs text-emerald-600 font-medium mt-0.5">Todos os dados preenchidos</p>}
                 </div>
             </div>
-            {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</button>}
+            {isCompleted && <button className="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors shrink-0 ml-2">Alterar</button>}
          </div>
 
          <div className={`transition-all duration-500 ease-in-out ${isActive ? 'max-h-[4000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-            <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8 space-y-10">
+            <div className="border-t border-slate-100 bg-slate-50/30 p-4 sm:p-5 md:p-6 space-y-7 sm:space-y-8">
                 
                 {/* Personal Data */}
                 <section>
-                    <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
+                    <h4 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase text-slate-400 tracking-widest">
                         <User className="h-5 w-5 text-slate-300" /> Dados Pessoais
                     </h4>
                     <div>
@@ -152,7 +152,7 @@ export const StepData = () => {
                             type="text"
                             value={formData.nome}
                             onChange={e => setFormData({...formData, nome: e.target.value})}
-                            className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                            className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                         />
                     </div>
                 </section>
@@ -161,7 +161,7 @@ export const StepData = () => {
 
                  {/* Contact */}
                 <section>
-                    <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
+                    <h4 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase text-slate-400 tracking-widest">
                         <Briefcase className="h-5 w-5 text-slate-300" /> Contato
                     </h4>
                     <div className="grid gap-5 md:grid-cols-2">
@@ -171,7 +171,7 @@ export const StepData = () => {
                                 type="email" 
                                 value={formData.email} 
                                 onChange={e => setFormData({...formData, email: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                                className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400" 
                             />
                         </div>
                         <div>
@@ -180,7 +180,7 @@ export const StepData = () => {
                                 type="tel" 
                                 value={formData.telefoneSecundario} 
                                 onChange={e => setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                                className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400" 
                                 placeholder="(00) 00000-0000"
                             />
                         </div>
@@ -191,7 +191,7 @@ export const StepData = () => {
 
                 {/* Custom Scheduling UI */}
                 <section>
-                    <h4 className="mb-6 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
+                    <h4 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase text-slate-400 tracking-widest">
                         <Calendar className="h-5 w-5 text-slate-300" /> Agendamento da Instalação
                     </h4>
                     
@@ -280,7 +280,7 @@ export const StepData = () => {
 
                 {/* Payment & Due Date */}
                 <section>
-                    <h4 className="mb-6 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
+                    <h4 className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase text-slate-400 tracking-widest">
                         <CreditCard className="h-5 w-5 text-slate-300" /> Pagamento
                     </h4>
                     
@@ -313,10 +313,10 @@ export const StepData = () => {
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div 
                                 onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}})} 
-                                className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'credit_card' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
+                                className={`cursor-pointer rounded-xl border-2 p-4 sm:p-5 transition-all duration-200 ${state.paymentMethod === 'credit_card' ? 'border-brand-500 bg-brand-50 shadow-sm' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
-                                    <span className="font-black text-slate-800 text-lg">Cartão de Crédito</span>
+                                    <span className="font-semibold text-slate-800 text-sm sm:text-base">Cartão de Crédito</span>
                                     <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors ${state.paymentMethod === 'credit_card' ? 'bg-brand-600 border-brand-600' : 'border-slate-300'}`}>
                                         {state.paymentMethod === 'credit_card' && <Check className="h-4 w-4 text-white"/>}
                                     </div>
@@ -325,10 +325,10 @@ export const StepData = () => {
                             </div>
                             <div 
                                 onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}})} 
-                                className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'boleto' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
+                                className={`cursor-pointer rounded-xl border-2 p-4 sm:p-5 transition-all duration-200 ${state.paymentMethod === 'boleto' ? 'border-brand-500 bg-brand-50 shadow-sm' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
-                                    <span className="font-black text-slate-800 text-lg">Boleto Digital</span>
+                                    <span className="font-semibold text-slate-800 text-sm sm:text-base">Boleto Digital</span>
                                     <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors ${state.paymentMethod === 'boleto' ? 'bg-brand-600 border-brand-600' : 'border-slate-300'}`}>
                                         {state.paymentMethod === 'boleto' && <Check className="h-4 w-4 text-white"/>}
                                     </div>

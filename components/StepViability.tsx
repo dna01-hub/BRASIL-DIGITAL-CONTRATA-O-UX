@@ -152,33 +152,33 @@ export const StepViability = () => {
 
   // Header Component
   const Header = () => (
-      <div 
-        className={`flex cursor-pointer items-center justify-between p-6 md:p-8 ${!isActive && isCompleted ? 'hover:bg-slate-50' : ''}`}
+      <div
+        className={`flex cursor-pointer items-center justify-between p-4 sm:p-5 ${!isActive && isCompleted ? 'hover:bg-slate-50/70' : ''}`}
         onClick={() => isCompleted && dispatch({type: 'SET_STEP', payload: 1})}
       >
-        <div className="flex items-center gap-5">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
-            {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : '1'}
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className={`flex h-9 w-9 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-md shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
+            {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : '1'}
           </div>
           <div>
-             <h3 className={`text-xl font-black tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Verificar Disponibilidade</h3>
+             <h3 className={`text-sm sm:text-base font-semibold tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Verificar Disponibilidade</h3>
              {isCompleted && state.address && (
-                 <p className="text-sm font-medium text-slate-500 mt-1">
+                 <p className="text-xs font-medium text-slate-400 mt-0.5">
                      {state.address.tipo === 'condominio' ? 'Condomínio' : state.address.logradouro}, {state.address.numero}
                  </p>
              )}
           </div>
         </div>
-        {isCompleted && <span className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</span>}
+        {isCompleted && <span className="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors shrink-0 ml-2">Alterar</span>}
       </div>
   );
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl border bg-white transition-all duration-500 ${isActive ? 'ring-4 ring-brand-500/20 shadow-2xl border-brand-500' : 'border-slate-200 shadow-sm'}`}>
+    <div className={`relative overflow-hidden rounded-2xl border bg-white transition-all duration-500 ${isActive ? 'ring-2 ring-brand-500/20 shadow-lg border-brand-400' : 'border-slate-200 shadow-sm'}`}>
       <Header />
 
       <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isActive ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
+        <div className="border-t border-slate-100 bg-slate-50/30 p-4 sm:p-5 md:p-6">
             
             {/* 1. Phone Input (First) */}
             <div className="mb-6">
@@ -190,9 +190,9 @@ export const StepViability = () => {
                         onChange={handlePhoneChange}
                         placeholder="(00) 00000-0000"
                         maxLength={15}
-                        className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 pl-12 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                        className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 pl-11 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                     />
-                    <Phone className="absolute left-4 top-4 h-6 w-6 text-slate-400" />
+                    <Phone className="absolute left-3.5 top-3.5 h-5 w-5 text-slate-400" />
                 </div>
             </div>
 
@@ -235,7 +235,7 @@ export const StepViability = () => {
                              <select 
                                 value={selectedCondo} 
                                 onChange={(e) => setSelectedCondo(e.target.value)}
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10"
+                                className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10"
                              >
                                  <option value="">Selecione...</option>
                                  {condos.map(c => <option key={c.id} value={c.id}>{c.nome} - {c.bairro}</option>)}
@@ -272,7 +272,7 @@ export const StepViability = () => {
                                     }}
                                     onBlur={handleCepBlur}
                                     placeholder="00000-000"
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                                 {loadingCep && <Loader2 className="absolute right-4 top-4 h-6 w-6 animate-spin text-brand-500"/>}
                             </div>
@@ -282,7 +282,7 @@ export const StepViability = () => {
                              <input 
                                 value={addressFields.cidade ? `${addressFields.cidade} - ${addressFields.estado}` : ''}
                                 readOnly
-                                className="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 text-slate-500 p-4 font-medium"
+                                className="w-full rounded-xl border border-slate-100 bg-slate-50 text-slate-500 p-3.5 font-medium"
                              />
                          </div>
                     </div>
@@ -295,7 +295,7 @@ export const StepViability = () => {
                                 <input 
                                     value={addressFields.logradouro}
                                     onChange={e => setAddressFields({...addressFields, logradouro: e.target.value})}
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                             <div className="md:col-span-1">
@@ -303,7 +303,7 @@ export const StepViability = () => {
                                 <input 
                                     value={addressFields.numero}
                                     onChange={e => setAddressFields({...addressFields, numero: e.target.value})}
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                             <div className="md:col-span-2">
@@ -311,7 +311,7 @@ export const StepViability = () => {
                                 <input 
                                     value={addressFields.bairro}
                                     onChange={e => setAddressFields({...addressFields, bairro: e.target.value})}
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                             <div className="md:col-span-2">
@@ -319,7 +319,7 @@ export const StepViability = () => {
                                 <input 
                                     value={addressFields.complemento}
                                     onChange={e => setAddressFields({...addressFields, complemento: e.target.value})}
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                         </div>

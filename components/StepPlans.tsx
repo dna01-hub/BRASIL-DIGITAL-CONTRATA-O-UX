@@ -42,30 +42,30 @@ export const StepPlans = () => {
   };
 
   return (
-    <div className={`relative overflow-hidden rounded-3xl border bg-white transition-all duration-500 ${isActive ? 'ring-4 ring-brand-500/20 shadow-2xl border-brand-500 mt-6' : 'border-slate-200 shadow-sm mt-4'}`}>
-      
+    <div className={`relative overflow-hidden rounded-2xl border bg-white transition-all duration-500 ${isActive ? 'ring-2 ring-brand-500/20 shadow-lg border-brand-400' : 'border-slate-200 shadow-sm'}`}>
+
       {/* Header */}
-      <div 
-        className={`flex items-center justify-between p-6 md:p-8 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50' : 'opacity-50 cursor-not-allowed'}`}
+      <div
+        className={`flex items-center justify-between p-4 sm:p-5 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50/70' : 'opacity-50 cursor-not-allowed'}`}
         onClick={() => isCompleted && dispatch({type: 'SET_STEP', payload: 2})}
       >
-        <div className="flex items-center gap-5">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
-            {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : '2'}
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className={`flex h-9 w-9 md:h-10 md:w-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-md shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
+            {isCompleted ? <CheckCircle2 className="h-4 w-4" /> : '2'}
           </div>
           <div>
-             <h3 className={`text-xl font-black tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Escolha seu Plano</h3>
+             <h3 className={`text-sm sm:text-base font-semibold tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Escolha seu Plano</h3>
              {isCompleted && state.selectedPlan && (
-                 <p className="text-sm font-medium text-slate-500 mt-1">{state.selectedPlan.name} - {state.selectedPlan.speed} MEGA por R$ {state.selectedPlan.price.toFixed(2)}</p>
+                 <p className="text-xs font-medium text-slate-400 mt-0.5">{state.selectedPlan.name} · {state.selectedPlan.speed} MEGA · R$ {state.selectedPlan.price.toFixed(2).replace('.', ',')}/mês</p>
              )}
           </div>
         </div>
-        {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</button>}
+        {isCompleted && <button className="text-xs font-semibold text-brand-600 hover:text-brand-700 transition-colors shrink-0 ml-2">Alterar</button>}
       </div>
 
       {/* Content */}
       <div className={`transition-all duration-700 ease-in-out ${isActive ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'}`}>
-        <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
+        <div className="border-t border-slate-100 bg-slate-50/30 p-4 sm:p-5 md:p-6">
             
             {/* Plan Cards */}
             <div className="grid gap-4 sm:gap-6 sm:grid-cols-1 lg:grid-cols-3">
@@ -84,23 +84,23 @@ export const StepPlans = () => {
                     )}
 
                     {/* Mobile: horizontal layout, Desktop: vertical */}
-                    <div className="flex items-center justify-between gap-4 lg:block">
-                        <div className="mb-0 lg:mb-4">
-                            <span className="text-xs font-black uppercase tracking-widest text-slate-400">{plan.name}</span>
+                    <div className="flex items-center justify-between gap-3 lg:block">
+                        <div className="mb-0 lg:mb-3">
+                            <span className="text-xs font-semibold uppercase tracking-widest text-slate-400">{plan.name}</span>
                             <div className="mt-1 flex items-baseline gap-1">
-                                <span className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900">{plan.speed}</span>
-                                <span className="text-base sm:text-lg font-bold text-slate-500">MEGA</span>
+                                <span className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tighter text-slate-900">{plan.speed}</span>
+                                <span className="text-sm sm:text-base font-semibold text-slate-500">MEGA</span>
                             </div>
                         </div>
 
-                        <div className="shrink-0 lg:mb-6 rounded-xl sm:rounded-2xl bg-slate-50 px-4 py-2 sm:p-4 border border-slate-100 text-right lg:text-left">
-                            <div className="flex items-center justify-end lg:justify-start gap-2 text-xs sm:text-sm font-medium text-slate-400 line-through">
-                                De R$ {plan.originalPrice.toFixed(2).replace('.', ',')}
+                        <div className="shrink-0 lg:mb-4 rounded-lg sm:rounded-xl bg-slate-50 px-3 py-1.5 sm:p-3 border border-slate-100 text-right lg:text-left">
+                            <div className="text-xs font-medium text-slate-400 line-through">
+                                R$ {plan.originalPrice.toFixed(2).replace('.', ',')}
                             </div>
                             <div className="flex items-baseline justify-end lg:justify-start gap-0.5 text-brand-600">
-                                <span className="text-sm font-bold">R$</span>
-                                <span className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">{plan.price.toFixed(2).replace('.', ',')}</span>
-                                <span className="text-xs font-bold text-slate-500">/mês</span>
+                                <span className="text-xs font-semibold">R$</span>
+                                <span className="text-xl sm:text-2xl lg:text-3xl font-black tracking-tight">{plan.price.toFixed(2).replace('.', ',')}</span>
+                                <span className="text-xs font-medium text-slate-500">/mês</span>
                             </div>
                         </div>
                     </div>
@@ -133,9 +133,9 @@ export const StepPlans = () => {
                 <div className="mt-10 animate-fade-in space-y-8">
                     
                     {/* APPS */}
-                    <div className="rounded-3xl border border-indigo-100 bg-indigo-50/50 p-6 md:p-8">
-                        <h4 className="mb-2 text-xl font-black text-slate-900 tracking-tight">1. Personalize seus Apps</h4>
-                        <p className="mb-8 text-slate-600 font-medium">
+                    <div className="rounded-2xl border border-indigo-100 bg-indigo-50/40 p-4 sm:p-5 md:p-6">
+                        <h4 className="mb-1 text-base font-semibold text-slate-900">1. Personalize seus Apps</h4>
+                        <p className="mb-5 text-sm text-slate-500 font-medium">
                             Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativos premium</strong>. Selecione os que você mais gosta:
                         </p>
 
@@ -171,13 +171,13 @@ export const StepPlans = () => {
                     </div>
 
                     {/* SERVICES */}
-                    <div className="rounded-3xl border border-violet-100 bg-violet-50/50 p-6 md:p-8">
-                         <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+                    <div className="rounded-2xl border border-violet-100 bg-violet-50/40 p-4 sm:p-5 md:p-6">
+                         <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-5 gap-2">
                             <div>
-                                <h4 className="text-xl font-black text-slate-900 tracking-tight">2. Serviços Adicionais (Opcional)</h4>
-                                <p className="text-slate-600 font-medium mt-1">Turbine sua conexão com serviços exclusivos.</p>
+                                <h4 className="text-base font-semibold text-slate-900">2. Serviços Adicionais <span className="text-slate-400 font-normal">(Opcional)</span></h4>
+                                <p className="text-xs sm:text-sm text-slate-500 font-medium mt-0.5">Turbine sua conexão com serviços exclusivos.</p>
                             </div>
-                            <span className="px-4 py-1.5 rounded-full bg-violet-200 text-violet-800 text-xs font-black uppercase tracking-wider self-start md:self-auto">Recomendado</span>
+                            <span className="px-3 py-1 rounded-full bg-violet-100 text-violet-700 text-xs font-semibold uppercase tracking-wider self-start sm:self-auto shrink-0">Recomendado</span>
                          </div>
 
                          <div className="grid gap-3 sm:gap-5 md:grid-cols-3">
@@ -197,9 +197,9 @@ export const StepPlans = () => {
                                                 {isAdded && <Check className="h-4 w-4 text-white"/>}
                                             </div>
                                         </div>
-                                        <h5 className="font-bold text-slate-900 text-lg">{svc.name}</h5>
-                                        <p className="text-sm text-slate-500 mt-2 mb-4 font-medium leading-relaxed">{svc.description}</p>
-                                        <p className="text-lg font-black text-violet-700">+ R$ {svc.price.toFixed(2).replace('.', ',')}<span className="text-sm text-slate-400 font-bold">/mês</span></p>
+                                        <h5 className="font-semibold text-slate-900 text-sm sm:text-base">{svc.name}</h5>
+                                        <p className="text-xs sm:text-sm text-slate-500 mt-1.5 mb-3 font-medium leading-relaxed">{svc.description}</p>
+                                        <p className="text-base font-bold text-violet-700">+ R$ {svc.price.toFixed(2).replace('.', ',')}<span className="text-xs text-slate-400 font-medium">/mês</span></p>
                                     </div>
                                 )
                             })}
