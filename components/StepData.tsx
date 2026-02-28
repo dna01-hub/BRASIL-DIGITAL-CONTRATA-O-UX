@@ -9,6 +9,7 @@ export const StepData = () => {
       email: state.customer?.email || '',
       telefoneSecundario: state.customer?.telefone || '',
   });
+  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
   const [date, setDate] = useState('');
   const [selectedTime, setSelectedTime] = useState<string>(''); // Local state for time selection styling
   
@@ -111,10 +112,13 @@ export const StepData = () => {
 
   const dueDates = ['05', '10', '15', '20', '25'];
 
+  const isEmailValid = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const isPhoneValid = (phone: string) => phone.replace(/\D/g, '').length === 11;
+
   const isFormValid =
       formData.nome &&
-      formData.email &&
-      formData.telefoneSecundario &&
+      formData.email && isEmailValid(formData.email) &&
+      formData.telefoneSecundario && isPhoneValid(formData.telefoneSecundario) &&
       date &&
       selectedTime &&
       state.paymentMethod;
@@ -167,22 +171,38 @@ export const StepData = () => {
                     <div className="grid gap-5 md:grid-cols-2">
                          <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
-                            <input 
-                                type="email" 
-                                value={formData.email} 
-                                onChange={e => setFormData({...formData, email: e.target.value})} 
-                                className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400" 
+                            <input
+                                type="email"
+                                value={formData.email}
+                                onChange={e => {
+                                  setFormData({...formData, email: e.target.value});
+                                  setErrors(prev => ({ ...prev, email: undefined }));
+                                }}
+                                onBlur={e => {
+                                  if (e.target.value && !isEmailValid(e.target.value))
+                                    setErrors(prev => ({ ...prev, email: 'Email inválido.' }));
+                                }}
+                                className={`w-full rounded-xl border bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400 ${errors.email ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                             />
+                            {errors.email && <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.email}</p>}
                         </div>
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Telefone Secundário</label>
-                            <input 
-                                type="tel" 
-                                value={formData.telefoneSecundario} 
-                                onChange={e => setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)})} 
-                                className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400" 
+                            <input
+                                type="tel"
+                                value={formData.telefoneSecundario}
+                                onChange={e => {
+                                  setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)});
+                                  setErrors(prev => ({ ...prev, phone: undefined }));
+                                }}
+                                onBlur={e => {
+                                  if (e.target.value && !isPhoneValid(e.target.value))
+                                    setErrors(prev => ({ ...prev, phone: 'Informe o celular com DDD (11 dígitos).' }));
+                                }}
+                                className={`w-full rounded-xl border bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400 ${errors.phone ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                                 placeholder="(00) 00000-0000"
                             />
+                            {errors.phone && <p className="mt-1.5 text-xs text-red-600 font-medium">{errors.phone}</p>}
                         </div>
                     </div>
                 </section>

@@ -3,9 +3,27 @@ import { useOrder } from '../OrderContext';
 import { api } from '../services/api';
 import { Loader2, ShieldCheck, CheckCircle2, UserCircle2 } from 'lucide-react';
 
+function validateCPF(cpf: string): boolean {
+  const clean = cpf.replace(/\D/g, '');
+  if (clean.length !== 11) return false;
+  if (/^(\d)\1{10}$/.test(clean)) return false;
+  let sum = 0;
+  for (let i = 0; i < 9; i++) sum += parseInt(clean[i]) * (10 - i);
+  let remainder = (sum * 10) % 11;
+  if (remainder >= 10) remainder = 0;
+  if (remainder !== parseInt(clean[9])) return false;
+  sum = 0;
+  for (let i = 0; i < 10; i++) sum += parseInt(clean[i]) * (11 - i);
+  remainder = (sum * 10) % 11;
+  if (remainder >= 10) remainder = 0;
+  if (remainder !== parseInt(clean[10])) return false;
+  return true;
+}
+
 export const StepAnalysis = () => {
   const { state, dispatch } = useOrder();
   const [doc, setDoc] = useState('');
+  const [cpfError, setCpfError] = useState('');
   const [loading, setLoading] = useState(false);
 
   const isActive = state.step === 3;
@@ -13,12 +31,14 @@ export const StepAnalysis = () => {
   const isDisabled = state.step < 3;
 
   const handleAnalyze = async () => {
+      setCpfError('');
+      if (!validateCPF(doc)) {
+        setCpfError('CPF inválido. Verifique os dígitos e tente novamente.');
+        return;
+      }
       setLoading(true);
       try {
         const phone = state.customer?.celular || '';
-        
-        // Use the phone collected in Step 1
-        console.log(`Analyzing with CPF: ${doc} and Phone: ${phone}`);
         const result = await api.analyzeCustomer('F', doc, phone);
         
         if (result.status === 'APROVADO') {
@@ -86,10 +106,11 @@ export const StepAnalysis = () => {
                     <input
                         type="text"
                         value={doc}
-                        onChange={(e) => setDoc(formatDoc(e.target.value))}
-                        className="w-full rounded-xl border border-slate-200 bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:border-brand-500 focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400 text-base tracking-widest"
+                        onChange={(e) => { setCpfError(''); setDoc(formatDoc(e.target.value)); }}
+                        className={`w-full rounded-xl border bg-white text-slate-900 p-3.5 font-medium outline-none transition-all focus:ring-2 focus:ring-brand-500/10 placeholder-slate-400 text-base tracking-widest ${cpfError ? 'border-red-400 focus:border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                         placeholder="000.000.000-00"
                     />
+                    {cpfError && <p className="mt-1.5 text-xs text-red-600 font-medium">{cpfError}</p>}
                 </div>
 
                 <div className="mt-6 flex flex-col sm:flex-row sm:justify-end">
