@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useOrder } from '../OrderContext';
-import { Calendar, CreditCard, User, CheckCircle2, ArrowRight, CalendarDays, AlertCircle, Briefcase, ChevronLeft, ChevronRight, Clock, Check } from 'lucide-react';
+import { api } from '../services/api';
+import { Calendar, CreditCard, User, CheckCircle2, ArrowRight, CalendarDays, AlertCircle, ChevronLeft, ChevronRight, Clock, Check } from 'lucide-react';
 
 export const StepData = () => {
   const { state, dispatch } = useOrder();
   const [formData, setFormData] = useState({
       nome: state.customer?.nome || '',
       email: state.customer?.email || '',
-      dataNascimento: state.customer?.dataNascimento || '',
       telefoneSecundario: state.customer?.telefone || '',
   });
   const [date, setDate] = useState('');
@@ -27,12 +27,17 @@ export const StepData = () => {
       .slice(0, 15);
   };
 
+  const saveFieldToSupabase = (field: string, value: string) => {
+    if (!state.leadId) return;
+    api.updateLead(state.leadId, { [field]: value });
+  };
+
   const handleNext = () => {
-     // Save form data to context before moving
      dispatch({
          type: 'SET_CUSTOMER',
          payload: {
-             ...formData,
+             nome: formData.nome,
+             email: formData.email,
              telefone: formData.telefoneSecundario
          }
      });
@@ -110,12 +115,11 @@ export const StepData = () => {
 
   const dueDates = ['05', '10', '15', '20', '25'];
 
-  const isFormValid = 
-      formData.nome && 
-      formData.email && 
-      formData.dataNascimento && 
+  const isFormValid =
+      formData.nome &&
+      formData.email &&
       formData.telefoneSecundario &&
-      date && 
+      date &&
       selectedTime &&
       state.paymentMethod;
 
@@ -144,55 +148,38 @@ export const StepData = () => {
                 {/* Personal Data */}
                 <section>
                     <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
-                        <User className="h-5 w-5 text-slate-300" /> Dados Pessoais
+                        <User className="h-5 w-5 text-slate-300" /> Dados
                     </h4>
-                    <div className="grid gap-5 md:grid-cols-2">
+                    <div className="grid gap-5 md:grid-cols-3">
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
-                            <input 
-                                type="text" 
-                                value={formData.nome} 
-                                onChange={e => setFormData({...formData, nome: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Data de Nascimento</label>
-                            <input 
-                                type="date" 
-                                value={formData.dataNascimento} 
-                                onChange={e => setFormData({...formData, dataNascimento: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                 <div className="h-px bg-slate-200/60"></div>
-
-                 {/* Contact */}
-                <section>
-                    <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
-                        <Briefcase className="h-5 w-5 text-slate-300" /> Contato
-                    </h4>
-                    <div className="grid gap-5 md:grid-cols-2">
-                         <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
-                            <input 
-                                type="email" 
-                                value={formData.email} 
-                                onChange={e => setFormData({...formData, email: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                            <input
+                                type="text"
+                                value={formData.nome}
+                                onChange={e => setFormData({...formData, nome: e.target.value})}
+                                onBlur={e => saveFieldToSupabase('nome', e.target.value)}
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                             />
                         </div>
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Telefone Secundário</label>
-                            <input 
-                                type="tel" 
-                                value={formData.telefoneSecundario} 
-                                onChange={e => setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                            <input
+                                type="tel"
+                                value={formData.telefoneSecundario}
+                                onChange={e => setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)})}
+                                onBlur={e => saveFieldToSupabase('telefone', e.target.value)}
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                                 placeholder="(00) 00000-0000"
+                            />
+                        </div>
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
+                            <input
+                                type="email"
+                                value={formData.email}
+                                onChange={e => setFormData({...formData, email: e.target.value})}
+                                onBlur={e => saveFieldToSupabase('email', e.target.value)}
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                             />
                         </div>
                     </div>
@@ -306,7 +293,7 @@ export const StepData = () => {
                                 {dueDates.map(day => (
                                     <button
                                         key={day}
-                                        onClick={() => dispatch({type: 'SET_PAYMENT', payload: { ...state.paymentMethod ? { method: state.paymentMethod } : { method: 'boleto' }, date: day } as any})}
+                                        onClick={() => dispatch({ type: 'SET_DUE_DATE', payload: day })}
                                         className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
                                         {day}

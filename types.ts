@@ -47,7 +47,7 @@ export interface CustomerData {
   email: string;
   celular: string; // Now captured in Step 1
   telefone?: string; // Telefone Secundário
-  dataNascimento: string;
+  dataNascimento?: string;
   rg?: string;
   orgaoEmissor?: string;
   sexo?: string;
@@ -89,6 +89,7 @@ export interface OrderState {
   scheduling: Scheduling | null;
   paymentMethod: 'credit_card' | 'boleto' | null;
   dueDate: string;
+  leadId: string | null;
 }
 
 export type OrderAction = 
@@ -102,4 +103,6 @@ export type OrderAction =
   | { type: 'SET_FILES'; payload: Partial<OrderFiles> } // New action for files
   | { type: 'SET_ANALYSIS'; payload: { status: OrderState['analysisStatus']; tax: number } }
   | { type: 'SET_SCHEDULING'; payload: Scheduling }
-  | { type: 'SET_PAYMENT'; payload: { method: 'credit_card' | 'boleto'; date: string } };
+  | { type: 'SET_PAYMENT'; payload: { method: 'credit_card' | 'boleto'; date: string } }
+  | { type: 'SET_DUE_DATE'; payload: string }
+  | { type: 'SET_LEAD_ID'; payload: string };

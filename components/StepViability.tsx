@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useOrder } from '../OrderContext';
 import { api } from '../services/api';
 import { MapPin, Search, Loader2, CheckCircle2, Home, Building2, Briefcase, Phone, XCircle } from 'lucide-react';
@@ -34,11 +34,34 @@ export const StepViability = () => {
   const [cepFound, setCepFound] = useState(false);
   const [showModal, setShowModal] = useState<'success' | 'error' | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const phoneSavedRef = useRef(false);
 
   const isActive = state.step === 1;
   const isCompleted = state.step > 1;
 
-  // Restore state logic omitted for brevity, but assumes context sync
+  // Auto-save phone when complete (11 raw digits)
+  useEffect(() => {
+    const rawPhone = phone.replace(/\D/g, '');
+    if (rawPhone.length !== 11) return;
+    if (phoneSavedRef.current) return;
+    phoneSavedRef.current = true;
+
+    const save = async () => {
+      if (state.leadId) {
+        await api.updateLead(state.leadId, { celular: phone });
+      } else {
+        const id = await api.upsertLead({ celular: phone });
+        if (id) dispatch({ type: 'SET_LEAD_ID', payload: id });
+      }
+    };
+    save();
+  }, [phone]);
+
+  // Reset flag when phone is cleared/changed to incomplete
+  useEffect(() => {
+    const rawPhone = phone.replace(/\D/g, '');
+    if (rawPhone.length < 11) phoneSavedRef.current = false;
+  }, [phone]);
 
   // Fetch Condos if type changes
   useEffect(() => {
@@ -51,21 +74,29 @@ export const StepViability = () => {
       }
   }, [residenceType]);
 
-  const handleCepBlur = async () => {
-    if (cep.replace(/\D/g, '').length !== 8) return;
-    
+  const handleCepFetch = async (rawCep: string) => {
+    if (rawCep.length !== 8) return;
     setLoadingCep(true);
     try {
-        const data = await api.searchCep(cep);
+        const data = await api.searchCep(rawCep);
         if (data && !data.erro) {
-            setAddressFields(prev => ({
-                ...prev,
+            const fields = {
                 logradouro: data.logradouro,
                 bairro: data.bairro,
                 cidade: data.localidade,
                 estado: data.uf
-            }));
+            };
+            setAddressFields(prev => ({ ...prev, ...fields }));
             setCepFound(true);
+            // Save CEP + address to Supabase
+            const formatted = rawCep.replace(/^(\d{5})(\d{3})$/, '$1-$2');
+            const leadPayload = { cep: formatted, ...fields };
+            if (state.leadId) {
+                await api.updateLead(state.leadId, leadPayload);
+            } else {
+                const id = await api.upsertLead({ ...leadPayload, celular: phone });
+                if (id) dispatch({ type: 'SET_LEAD_ID', payload: id });
+            }
         } else {
             setErrorMsg('CEP não encontrado.');
         }
@@ -266,11 +297,12 @@ export const StepViability = () => {
                                 <input 
                                     value={cep}
                                     onChange={(e) => {
-                                        let v = e.target.value.replace(/\D/g,'').slice(0,8);
-                                        if(v.length > 5) v = v.replace(/^(\d{5})(\d)/, '$1-$2');
+                                        const raw = e.target.value.replace(/\D/g,'').slice(0,8);
+                                        let v = raw;
+                                        if(raw.length > 5) v = raw.replace(/^(\d{5})(\d)/, '$1-$2');
                                         setCep(v);
+                                        if (raw.length === 8) handleCepFetch(raw);
                                     }}
-                                    onBlur={handleCepBlur}
                                     placeholder="00000-000"
                                     className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
@@ -292,33 +324,37 @@ export const StepViability = () => {
                         <div className="grid gap-5 md:grid-cols-4 animate-slide-down">
                             <div className="md:col-span-3">
                                 <label className="mb-2 block text-sm font-bold text-slate-700">Endereço (Rua/Av)</label>
-                                <input 
+                                <input
                                     value={addressFields.logradouro}
                                     onChange={e => setAddressFields({...addressFields, logradouro: e.target.value})}
+                                    onBlur={e => state.leadId && api.updateLead(state.leadId, { logradouro: e.target.value })}
                                     className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                             <div className="md:col-span-1">
                                 <label className="mb-2 block text-sm font-bold text-slate-700">Número</label>
-                                <input 
+                                <input
                                     value={addressFields.numero}
                                     onChange={e => setAddressFields({...addressFields, numero: e.target.value})}
+                                    onBlur={e => state.leadId && api.updateLead(state.leadId, { numero: e.target.value })}
                                     className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                             <div className="md:col-span-2">
                                 <label className="mb-2 block text-sm font-bold text-slate-700">Bairro</label>
-                                <input 
+                                <input
                                     value={addressFields.bairro}
                                     onChange={e => setAddressFields({...addressFields, bairro: e.target.value})}
+                                    onBlur={e => state.leadId && api.updateLead(state.leadId, { bairro: e.target.value })}
                                     className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
                             <div className="md:col-span-2">
                                 <label className="mb-2 block text-sm font-bold text-slate-700">Complemento</label>
-                                <input 
+                                <input
                                     value={addressFields.complemento}
                                     onChange={e => setAddressFields({...addressFields, complemento: e.target.value})}
+                                    onBlur={e => state.leadId && api.updateLead(state.leadId, { complemento: e.target.value })}
                                     className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                                 />
                             </div>
