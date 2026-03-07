@@ -96,13 +96,12 @@ function buildLeadData(orderState: OrderState): Record<string, any> {
 export const api = {
   upsertLead: async (data: object): Promise<string | null> => {
     try {
-      const { data: result, error } = await supabase
+      const newId = crypto.randomUUID();
+      const { error } = await supabase
         .from('pedidos')
-        .insert({ ...data, status: 'lead' })
-        .select('id')
-        .single();
+        .insert({ ...data, id: newId, status: 'lead' });
       if (error) { console.error('[Supabase] upsertLead:', error.message); return null; }
-      return result?.id ?? null;
+      return newId;
     } catch (e) {
       console.error('[Supabase] upsertLead exception:', e);
       return null;
@@ -128,13 +127,12 @@ export const api = {
         if (error) console.error('[Supabase] saveStepData update:', error.message);
         return leadId;
       } else {
-        const { data: result, error } = await supabase
+        const newId = crypto.randomUUID();
+        const { error } = await supabase
           .from('pedidos')
-          .insert({ ...data, status: 'lead' })
-          .select('id')
-          .single();
+          .insert({ ...data, id: newId, status: 'lead' });
         if (error) { console.error('[Supabase] saveStepData insert:', error.message); return null; }
-        return result?.id ?? null;
+        return newId;
       }
     } catch (e) {
       console.error('[Supabase] saveStepData exception:', e);
