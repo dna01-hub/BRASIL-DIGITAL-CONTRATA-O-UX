@@ -32,7 +32,7 @@ export const StepData = () => {
     api.updateLead(state.leadId, { [field]: value });
   };
 
-  const handleNext = () => {
+  const handleNext = async () => {
      dispatch({
          type: 'SET_CUSTOMER',
          payload: {
@@ -41,15 +41,32 @@ export const StepData = () => {
              telefone: formData.telefoneSecundario
          }
      });
+     const scheduling = {
+         date: date,
+         timeId: selectedTime === 'Manhã' ? '1' : '2',
+         timeLabel: selectedTime || 'Comercial'
+     };
      dispatch({
          type: 'SET_SCHEDULING',
-         payload: { 
-             date: date, 
-             timeId: selectedTime === 'Manhã' ? '1' : '2', 
-             timeLabel: selectedTime || 'Comercial' 
-         } 
+         payload: scheduling
      });
      dispatch({ type: 'SET_STEP', payload: 5 });
+     // Save all data collected so far to Supabase
+     const updatedState = {
+         ...state,
+         step: 5,
+         customer: {
+             ...state.customer!,
+             nome: formData.nome,
+             email: formData.email,
+             telefone: formData.telefoneSecundario
+         },
+         scheduling
+     };
+     const savedId = await api.saveStepData(updatedState);
+     if (savedId && !state.leadId) {
+         dispatch({ type: 'SET_LEAD_ID', payload: savedId });
+     }
   };
 
   // Calendar Helpers
