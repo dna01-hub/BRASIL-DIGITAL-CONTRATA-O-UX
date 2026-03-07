@@ -99,8 +99,8 @@ export const api = {
       const newId = crypto.randomUUID();
       const { error } = await supabase
         .from('pedidos')
-        .insert({ ...data, id: newId, status: 'lead' });
-      if (error) { console.error('[Supabase] upsertLead:', error.message); return null; }
+        .insert({ ...data, id: newId, status: 'novo' });
+      if (error) { console.error('[Supabase] upsertLead código:', error.code, '| msg:', error.message, '| hint:', error.hint); return null; }
       return newId;
     } catch (e) {
       console.error('[Supabase] upsertLead exception:', e);
@@ -124,14 +124,14 @@ export const api = {
 
       if (leadId) {
         const { error } = await supabase.from('pedidos').update(data).eq('id', leadId);
-        if (error) console.error('[Supabase] saveStepData update:', error.message);
+        if (error) console.error('[Supabase] saveStepData update código:', error.code, '| msg:', error.message, '| hint:', error.hint);
         return leadId;
       } else {
         const newId = crypto.randomUUID();
         const { error } = await supabase
           .from('pedidos')
-          .insert({ ...data, id: newId, status: 'lead' });
-        if (error) { console.error('[Supabase] saveStepData insert:', error.message); return null; }
+          .insert({ ...data, id: newId, status: 'novo' });
+        if (error) { console.error('[Supabase] saveStepData insert código:', error.code, '| msg:', error.message, '| hint:', error.hint); return null; }
         return newId;
       }
     } catch (e) {
