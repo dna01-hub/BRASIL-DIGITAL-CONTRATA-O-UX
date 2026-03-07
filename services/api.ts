@@ -52,6 +52,31 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
 }
 
 export const api = {
+  // Lead persistence (progressive save)
+  upsertLead: async (data: object): Promise<string | null> => {
+    try {
+      const { data: result, error } = await supabase
+        .from('pedidos')
+        .insert({ ...data, status: 'lead' })
+        .select('id')
+        .single();
+      if (error) { console.error('[Supabase] upsertLead:', error.message); return null; }
+      return result?.id ?? null;
+    } catch (e) {
+      console.error('[Supabase] upsertLead exception:', e);
+      return null;
+    }
+  },
+
+  updateLead: async (id: string, data: object): Promise<void> => {
+    try {
+      const { error } = await supabase.from('pedidos').update(data).eq('id', id);
+      if (error) console.error('[Supabase] updateLead:', error.message);
+    } catch (e) {
+      console.error('[Supabase] updateLead exception:', e);
+    }
+  },
+
   // Address & Viability
   checkViability: async (address: string): Promise<{ feasible: boolean; coords: [number, number] }> => {
     const FALLBACK_COORDS: [number, number] = [-46.6333, -23.5505]; // Sao Paulo
@@ -135,8 +160,8 @@ export const api = {
     // Save to Supabase first (non-blocking on failure)
     if (orderState) {
       try {
-        const { address, selectedPlan, selectedApps, additionalServices, customer, analysisStatus, activationTax, scheduling, paymentMethod, dueDate } = orderState;
-        const { error } = await supabase.from('pedidos').insert({
+        const { address, selectedPlan, selectedApps, additionalServices, customer, analysisStatus, activationTax, scheduling, paymentMethod, dueDate, leadId } = orderState;
+        const leadData = {
           // Cliente
           nome: customer?.nome ?? null,
           cpf_cnpj: customer?.cpfCnpj ?? null,
@@ -182,7 +207,15 @@ export const api = {
           forma_pagamento: paymentMethod,
           vencimento: dueDate,
           status: 'novo',
-        });
+        };
+
+        let error;
+        if (leadId) {
+          // Update existing lead record
+          ({ error } = await supabase.from('pedidos').update(leadData).eq('id', leadId));
+        } else {
+          ({ error } = await supabase.from('pedidos').insert(leadData));
+        }
         if (error) {
           console.error('[Supabase] Erro ao salvar pedido:', error.message);
         } else {

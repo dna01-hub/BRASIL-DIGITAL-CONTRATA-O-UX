@@ -18,7 +18,8 @@ const initialState: OrderState = {
   activationTax: 0,
   scheduling: null,
   paymentMethod: null,
-  dueDate: '10'
+  dueDate: '10',
+  leadId: null
 };
 
 const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
@@ -83,6 +84,10 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
       return { ...state, scheduling: action.payload };
     case 'SET_PAYMENT':
       return { ...state, paymentMethod: action.payload.method, dueDate: action.payload.date };
+    case 'SET_DUE_DATE':
+      return { ...state, dueDate: action.payload };
+    case 'SET_LEAD_ID':
+      return { ...state, leadId: action.payload };
     default:
       return state;
   }
