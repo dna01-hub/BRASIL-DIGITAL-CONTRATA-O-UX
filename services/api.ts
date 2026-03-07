@@ -57,7 +57,7 @@ export const api = {
     try {
       const { data: result, error } = await supabase
         .from('pedidos')
-        .insert({ ...data, status: 'lead' })
+        .insert({ ...data, status: 'novo' })
         .select('id')
         .single();
       if (error) { console.error('[Supabase] upsertLead:', error.message); return null; }
@@ -126,7 +126,7 @@ export const api = {
         if (error) console.error('[Supabase] saveStepData update:', error.message);
         return leadId;
       } else {
-        data.status = 'lead';
+        data.status = 'novo';
         const { data: result, error } = await supabase
           .from('pedidos')
           .insert(data)
