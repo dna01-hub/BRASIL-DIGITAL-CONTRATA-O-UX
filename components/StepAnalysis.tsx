@@ -22,9 +22,10 @@ export const StepAnalysis = () => {
         const result = await api.analyzeCustomer('F', doc, phone);
         
         if (result.status === 'APROVADO') {
+            const analysisStatus = result.valor_ativacao > 0 ? 'APPROVED_WITH_TAX' : 'APPROVED';
             dispatch({
                 type: 'SET_ANALYSIS',
-                payload: { status: result.valor_ativacao > 0 ? 'APPROVED_WITH_TAX' : 'APPROVED', tax: result.valor_ativacao }
+                payload: { status: analysisStatus, tax: result.valor_ativacao }
             });
             dispatch({
                 type: 'SET_CUSTOMER',
@@ -34,6 +35,14 @@ export const StepAnalysis = () => {
                     // Phone is already in state, preserving it
                 }
             });
+            if (state.leadId) {
+                api.updateLead(state.leadId, {
+                    cpf_cnpj: doc,
+                    nome: result.nome_cliente || '',
+                    analise_status: analysisStatus,
+                    taxa_ativacao: result.valor_ativacao,
+                });
+            }
             dispatch({ type: 'SET_STEP', payload: 4 });
         } else {
             alert('Não foi possível aprovar automaticamente. Entre em contato.');
