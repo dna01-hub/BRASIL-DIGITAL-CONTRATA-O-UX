@@ -174,9 +174,29 @@ export const StepViability = () => {
     }
   };
 
-  const closeModal = (proceed: boolean) => {
+  const closeModal = async (proceed: boolean) => {
       if (proceed && showModal === 'success') {
           dispatch({ type: 'SET_STEP', payload: 2 });
+          // Save all step 1 data to Supabase
+          const currentState = {
+              ...state,
+              step: 2,
+              viabilityConfirmed: true,
+              customer: {
+                  ...state.customer!,
+                  celular: phone,
+                  nome: state.customer?.nome || '',
+                  cpfCnpj: state.customer?.cpfCnpj || '',
+                  email: state.customer?.email || '',
+                  dataNascimento: state.customer?.dataNascimento || '',
+                  tipoPessoa: state.customer?.tipoPessoa || 'F' as const
+              },
+              address: state.address // Already set by SET_ADDRESS dispatch
+          };
+          const savedId = await api.saveStepData(currentState);
+          if (savedId && !state.leadId) {
+              dispatch({ type: 'SET_LEAD_ID', payload: savedId });
+          }
       }
       setShowModal(null);
   };

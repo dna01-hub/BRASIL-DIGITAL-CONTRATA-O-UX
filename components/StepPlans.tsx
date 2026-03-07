@@ -69,9 +69,14 @@ export const StepPlans = () => {
       }
   };
 
-  const handleContinue = () => {
+  const handleContinue = async () => {
       if(state.selectedPlan && state.selectedApps.length === state.selectedPlan.appsLimit) {
         dispatch({ type: 'SET_STEP', payload: 3 });
+        // Save all data collected so far to Supabase
+        const savedId = await api.saveStepData({ ...state, step: 3 });
+        if (savedId && !state.leadId) {
+            dispatch({ type: 'SET_LEAD_ID', payload: savedId });
+        }
       }
   };
 

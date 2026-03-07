@@ -77,6 +77,73 @@ export const api = {
     }
   },
 
+  // Progressive save: persists all collected data at each step transition
+  saveStepData: async (orderState: OrderState): Promise<string | null> => {
+    try {
+      const { address, selectedPlan, selectedApps, additionalServices, customer, analysisStatus, activationTax, scheduling, paymentMethod, dueDate, leadId } = orderState;
+      const data: Record<string, any> = {
+        nome: customer?.nome ?? null,
+        cpf_cnpj: customer?.cpfCnpj ?? null,
+        email: customer?.email ?? null,
+        celular: customer?.celular ?? null,
+        telefone: customer?.telefone ?? null,
+        data_nascimento: customer?.dataNascimento ?? null,
+        tipo_pessoa: customer?.tipoPessoa ?? null,
+        razao_social: customer?.razaoSocial ?? null,
+        nome_responsavel: customer?.nomeResponsavel ?? null,
+        cpf_responsavel: customer?.cpfResponsavel ?? null,
+        cep: address?.cep ?? null,
+        logradouro: address?.logradouro ?? null,
+        numero: address?.numero ?? null,
+        bairro: address?.bairro ?? null,
+        cidade: address?.cidade ?? null,
+        estado: address?.estado ?? null,
+        complemento: address?.complemento ?? null,
+        tipo_endereco: address?.tipo ?? null,
+        condominio_id: address?.condominioId ?? null,
+        condominio_nome: address?.condominioNome ?? null,
+        bloco: address?.bloco ?? null,
+        apartamento: address?.apartamento ?? null,
+        latitude: address?.latitude ?? null,
+        longitude: address?.longitude ?? null,
+        plano_id: selectedPlan?.id ?? null,
+        plano_nome: selectedPlan?.name ?? null,
+        plano_velocidade: selectedPlan?.speed ?? null,
+        plano_preco: selectedPlan?.price ?? null,
+        apps: selectedApps.length > 0 ? (selectedApps as any) : null,
+        servicos_adicionais: additionalServices.length > 0 ? (additionalServices as any) : null,
+        analise_status: analysisStatus ?? null,
+        taxa_ativacao: activationTax ?? null,
+        agendamento_data: scheduling?.date ?? null,
+        agendamento_horario_id: scheduling?.timeId ?? null,
+        agendamento_horario_label: scheduling?.timeLabel ?? null,
+        forma_pagamento: paymentMethod ?? null,
+        vencimento: dueDate ?? null,
+      };
+
+      if (leadId) {
+        const { error } = await supabase.from('pedidos').update(data).eq('id', leadId);
+        if (error) console.error('[Supabase] saveStepData update:', error.message);
+        return leadId;
+      } else {
+        data.status = 'lead';
+        const { data: result, error } = await supabase
+          .from('pedidos')
+          .insert(data)
+          .select('id')
+          .single();
+        if (error) {
+          console.error('[Supabase] saveStepData insert:', error.message);
+          return null;
+        }
+        return result?.id ?? null;
+      }
+    } catch (e) {
+      console.error('[Supabase] saveStepData exception:', e);
+      return null;
+    }
+  },
+
   // Address & Viability
   checkViability: async (address: string): Promise<{ feasible: boolean; coords: [number, number] }> => {
     const FALLBACK_COORDS: [number, number] = [-46.6333, -23.5505]; // Sao Paulo
