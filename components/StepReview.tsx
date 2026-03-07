@@ -26,7 +26,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
               payment: { method: state.paymentMethod, dueDate: state.dueDate },
               scheduling: state.scheduling,
               filesReceived: false // Changed to false as files are removed
-          });
+          }, state);
           onComplete(); // Triggers the success screen in App.tsx
       } catch (e) {
           alert("Houve um erro ao processar seu pedido. Tente novamente.");
