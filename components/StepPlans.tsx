@@ -1,5 +1,6 @@
 import React from 'react';
 import { useOrder } from '../OrderContext';
+import { api } from '../services/api';
 import { Check, Star, CheckCircle2, Plus, Wifi, Zap, Shield } from 'lucide-react';
 import { Plan, AppOption, AdditionalService } from '../types';
 
@@ -33,6 +34,39 @@ export const StepPlans = () => {
 
   const handleSelectPlan = (plan: Plan) => {
       dispatch({ type: 'SET_PLAN', payload: plan });
+      if (state.leadId) {
+          api.updateLead(state.leadId, {
+              plano_id: plan.id,
+              plano_nome: plan.name,
+              plano_velocidade: plan.speed,
+              plano_preco: plan.price,
+              apps: [],
+          });
+      }
+  };
+
+  const handleToggleApp = (app: AppOption) => {
+      const exists = state.selectedApps.find(a => a.id === app.id);
+      const limit = state.selectedPlan?.appsLimit || 0;
+      if (!exists && state.selectedApps.length >= limit) return;
+      dispatch({ type: 'TOGGLE_APP', payload: app });
+      const newApps = exists
+          ? state.selectedApps.filter(a => a.id !== app.id)
+          : [...state.selectedApps, app];
+      if (state.leadId) {
+          api.updateLead(state.leadId, { apps: newApps });
+      }
+  };
+
+  const handleToggleService = (svc: AdditionalService) => {
+      const exists = state.additionalServices.find(s => s.id === svc.id);
+      dispatch({ type: 'TOGGLE_SERVICE', payload: svc });
+      const newServices = exists
+          ? state.additionalServices.filter(s => s.id !== svc.id)
+          : [...state.additionalServices, svc];
+      if (state.leadId) {
+          api.updateLead(state.leadId, { servicos_adicionais: newServices });
+      }
   };
 
   const handleContinue = () => {
@@ -148,7 +182,7 @@ export const StepPlans = () => {
                                 return (
                                     <button
                                         key={app.id}
-                                        onClick={() => !disabled && dispatch({type: 'TOGGLE_APP', payload: app})}
+                                        onClick={() => !disabled && handleToggleApp(app)}
                                         className={`relative flex flex-col items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border-2 p-3 sm:p-4 transition-all duration-300 ${
                                             isSelected
                                             ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105'
@@ -186,7 +220,7 @@ export const StepPlans = () => {
                                 return (
                                     <div
                                         key={svc.id}
-                                        onClick={() => dispatch({type: 'TOGGLE_SERVICE', payload: svc})}
+                                        onClick={() => handleToggleService(svc)}
                                         className={`cursor-pointer rounded-2xl border-2 p-4 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-lg shadow-violet-500/10 scale-[1.01]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
                                     >
                                         <div className="flex justify-between items-start mb-3 sm:mb-4">
