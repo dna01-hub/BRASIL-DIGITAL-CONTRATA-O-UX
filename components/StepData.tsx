@@ -72,7 +72,21 @@ export const StepData = () => {
     const year = selected.getFullYear();
     const month = String(selected.getMonth() + 1).padStart(2, '0');
     const dayStr = String(day).padStart(2, '0');
-    setDate(`${year}-${month}-${dayStr}`);
+    const dateStr = `${year}-${month}-${dayStr}`;
+    setDate(dateStr);
+    if (state.leadId) {
+      api.updateLead(state.leadId, { agendamento_data: dateStr });
+    }
+  };
+
+  const handleTimeSelect = (time: string) => {
+    setSelectedTime(time);
+    if (state.leadId) {
+      api.updateLead(state.leadId, {
+        agendamento_horario_id: time === 'Manhã' ? '1' : '2',
+        agendamento_horario_label: time,
+      });
+    }
   };
 
   const renderCalendar = () => {
@@ -249,7 +263,7 @@ export const StepData = () => {
                                         {['Manhã', 'Tarde'].map(time => (
                                             <button 
                                                 key={time} 
-                                                onClick={() => setSelectedTime(time)}
+                                                onClick={() => handleTimeSelect(time)}
                                                 className={`
                                                     relative flex items-center justify-center gap-2 rounded-2xl border-2 px-4 py-5 text-base font-black transition-all duration-300
                                                     ${selectedTime === time 
@@ -293,7 +307,10 @@ export const StepData = () => {
                                 {dueDates.map(day => (
                                     <button
                                         key={day}
-                                        onClick={() => dispatch({ type: 'SET_DUE_DATE', payload: day })}
+                                        onClick={() => {
+                                        dispatch({ type: 'SET_DUE_DATE', payload: day });
+                                        if (state.leadId) api.updateLead(state.leadId, { vencimento: day });
+                                    }}
                                         className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
                                         {day}
@@ -310,7 +327,10 @@ export const StepData = () => {
 
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div 
-                                onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}})} 
+                                onClick={() => {
+                                    dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}});
+                                    if (state.leadId) api.updateLead(state.leadId, { forma_pagamento: 'credit_card' });
+                                }}
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'credit_card' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
@@ -322,7 +342,10 @@ export const StepData = () => {
                                 <p className="text-sm text-slate-500 font-medium leading-relaxed">Pagamento recorrente, não ocupa o limite total do cartão.</p>
                             </div>
                             <div 
-                                onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}})} 
+                                onClick={() => {
+                                    dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}});
+                                    if (state.leadId) api.updateLead(state.leadId, { forma_pagamento: 'boleto' });
+                                }}
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'boleto' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
