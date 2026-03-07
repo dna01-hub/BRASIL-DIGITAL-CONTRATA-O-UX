@@ -140,15 +140,17 @@ export const StepViability = () => {
           setShowModal('success');
           // Update Global State
           dispatch({ type: 'SET_CONTACT_INFO', payload: { celular: phone } });
+          const condoNome = condos.find(c => String(c.id) === String(selectedCondo))?.nome;
           dispatch({
               type: 'SET_ADDRESS',
               payload: {
                   cep,
                   ...addressFields,
                   tipo: residenceType,
-                  condominioId: selectedCondo,
-                  bloco,
-                  apartamento: apto,
+                  condominioId: selectedCondo || undefined,
+                  condominioNome: condoNome || undefined,
+                  bloco: bloco || undefined,
+                  apartamento: apto || undefined,
                   latitude: result.coords[1],
                   longitude: result.coords[0]
               }
@@ -157,16 +159,20 @@ export const StepViability = () => {
           setShowModal('error');
       }
     } catch (e) {
-       // Demo Fallback: If mapbox fails/limit reached, show success for demo
        console.warn("API Fail - Falling back to success for demo purposes");
        setShowModal('success');
+       const condoNome = condos.find(c => String(c.id) === String(selectedCondo))?.nome;
        dispatch({ type: 'SET_CONTACT_INFO', payload: { celular: phone } });
        dispatch({
           type: 'SET_ADDRESS',
           payload: {
               cep,
               ...addressFields,
-              tipo: residenceType
+              tipo: residenceType,
+              condominioId: selectedCondo || undefined,
+              condominioNome: condoNome || undefined,
+              bloco: bloco || undefined,
+              apartamento: apto || undefined,
           }
       });
     } finally {
