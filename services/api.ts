@@ -1,4 +1,5 @@
-import { Address } from '../types';
+import { Address, OrderState } from '../types';
+import { supabase } from '../lib/supabase';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoiZGFuaWVsb2xpdmVpcmExMDAiLCJhIjoiY21jYXhtNW5wMDhwaTJsb2tuendpcDZsOCJ9.d2vLD_yT0yUwyJFD0-_dSQ';
 const MAPBOX_TILESET = 'danieloliveira100.4pws8e6n';
@@ -128,8 +129,70 @@ export const api = {
   },
 
   // Final Submission
-  submitOrder: async (payload: any) => {
+  submitOrder: async (payload: any, orderState?: OrderState) => {
     console.log(`[Order] Submitting payload:`, payload);
+
+    // Save to Supabase first (non-blocking on failure)
+    if (orderState) {
+      try {
+        const { address, selectedPlan, selectedApps, additionalServices, customer, analysisStatus, activationTax, scheduling, paymentMethod, dueDate } = orderState;
+        const { error } = await supabase.from('pedidos').insert({
+          // Cliente
+          nome: customer?.nome ?? null,
+          cpf_cnpj: customer?.cpfCnpj ?? null,
+          email: customer?.email ?? null,
+          celular: customer?.celular ?? null,
+          telefone: customer?.telefone ?? null,
+          data_nascimento: customer?.dataNascimento ?? null,
+          tipo_pessoa: customer?.tipoPessoa ?? null,
+          razao_social: customer?.razaoSocial ?? null,
+          nome_responsavel: customer?.nomeResponsavel ?? null,
+          cpf_responsavel: customer?.cpfResponsavel ?? null,
+          // Endereço
+          cep: address?.cep ?? null,
+          logradouro: address?.logradouro ?? null,
+          numero: address?.numero ?? null,
+          bairro: address?.bairro ?? null,
+          cidade: address?.cidade ?? null,
+          estado: address?.estado ?? null,
+          complemento: address?.complemento ?? null,
+          tipo_endereco: address?.tipo ?? null,
+          condominio_id: address?.condominioId ?? null,
+          condominio_nome: address?.condominioNome ?? null,
+          bloco: address?.bloco ?? null,
+          apartamento: address?.apartamento ?? null,
+          latitude: address?.latitude ?? null,
+          longitude: address?.longitude ?? null,
+          // Plano
+          plano_id: selectedPlan?.id ?? null,
+          plano_nome: selectedPlan?.name ?? null,
+          plano_velocidade: selectedPlan?.speed ?? null,
+          plano_preco: selectedPlan?.price ?? null,
+          // Apps e serviços
+          apps: selectedApps as any,
+          servicos_adicionais: additionalServices as any,
+          // Análise
+          analise_status: analysisStatus,
+          taxa_ativacao: activationTax,
+          // Agendamento
+          agendamento_data: scheduling?.date ?? null,
+          agendamento_horario_id: scheduling?.timeId ?? null,
+          agendamento_horario_label: scheduling?.timeLabel ?? null,
+          // Pagamento
+          forma_pagamento: paymentMethod,
+          vencimento: dueDate,
+          status: 'novo',
+        });
+        if (error) {
+          console.error('[Supabase] Erro ao salvar pedido:', error.message);
+        } else {
+          console.log('[Supabase] Pedido salvo com sucesso.');
+        }
+      } catch (err) {
+        console.error('[Supabase] Exceção ao salvar pedido:', err);
+      }
+    }
+
     return fetchWithRetry(`${API_URL}/pre-vendas/cadastrar`, {
       method: 'POST',
       headers: {
