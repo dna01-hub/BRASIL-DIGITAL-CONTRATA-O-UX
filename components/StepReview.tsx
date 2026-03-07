@@ -80,11 +80,6 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                                     <dd className="font-bold text-slate-900">{state.customer?.cpfCnpj}</dd>
                                 </div>
 
-                                <div>
-                                    <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Data Nasc.</dt>
-                                    <dd className="font-bold text-slate-900">{formatDate(state.customer?.dataNascimento)}</dd>
-                                </div>
-
                                 <div className="sm:col-span-2 pt-4 border-t border-slate-200/60 mt-2">
                                     <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Canais de Contato</dt>
                                     <dd className="space-y-2.5">
