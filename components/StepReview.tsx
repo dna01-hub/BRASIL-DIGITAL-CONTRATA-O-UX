@@ -18,16 +18,8 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
   const handleSubmit = async () => {
       setIsSubmitting(true);
       try {
-          await api.submitOrder({
-              customer: state.customer,
-              address: state.address,
-              plan: state.selectedPlan,
-              services: state.additionalServices,
-              payment: { method: state.paymentMethod, dueDate: state.dueDate },
-              scheduling: state.scheduling,
-              filesReceived: false // Changed to false as files are removed
-          }, state);
-          onComplete(); // Triggers the success screen in App.tsx
+          await api.submitOrder(state);
+          onComplete();
       } catch (e) {
           alert("Houve um erro ao processar seu pedido. Tente novamente.");
       } finally {

@@ -9,11 +9,6 @@ const initialState: OrderState = {
   selectedApps: [],
   additionalServices: [],
   customer: null,
-  files: {
-    docFrente: null,
-    docVerso: null,
-    comprovanteResidencia: null
-  },
   analysisStatus: null,
   activationTax: 0,
   scheduling: null,
@@ -68,11 +63,6 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
       return { 
           ...state, 
           customer: { ...state.customer!, ...action.payload } 
-      };
-    case 'SET_FILES':
-      return {
-        ...state,
-        files: { ...state.files, ...action.payload }
       };
     case 'SET_ANALYSIS':
       return { 
