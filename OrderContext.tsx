@@ -9,12 +9,16 @@ const initialState: OrderState = {
   selectedApps: [],
   additionalServices: [],
   customer: null,
+  files: {
+    docFrente: null,
+    docVerso: null,
+    comprovanteResidencia: null
+  },
   analysisStatus: null,
   activationTax: 0,
   scheduling: null,
   paymentMethod: null,
-  dueDate: '10',
-  leadId: null
+  dueDate: '10'
 };
 
 const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
@@ -64,6 +68,11 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
           ...state, 
           customer: { ...state.customer!, ...action.payload } 
       };
+    case 'SET_FILES':
+      return {
+        ...state,
+        files: { ...state.files, ...action.payload }
+      };
     case 'SET_ANALYSIS':
       return { 
         ...state, 
@@ -74,10 +83,6 @@ const orderReducer = (state: OrderState, action: OrderAction): OrderState => {
       return { ...state, scheduling: action.payload };
     case 'SET_PAYMENT':
       return { ...state, paymentMethod: action.payload.method, dueDate: action.payload.date };
-    case 'SET_DUE_DATE':
-      return { ...state, dueDate: action.payload };
-    case 'SET_LEAD_ID':
-      return { ...state, leadId: action.payload };
     default:
       return state;
   }

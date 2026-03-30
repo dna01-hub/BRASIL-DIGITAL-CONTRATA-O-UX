@@ -1,13 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useOrder } from '../OrderContext';
-import { api } from '../services/api';
-import { Calendar, CreditCard, User, CheckCircle2, ArrowRight, CalendarDays, AlertCircle, ChevronLeft, ChevronRight, Clock, Check } from 'lucide-react';
+import { Calendar, CreditCard, User, CheckCircle2, ArrowRight, CalendarDays, AlertCircle, Briefcase, ChevronLeft, ChevronRight, Clock, Check } from 'lucide-react';
 
 export const StepData = () => {
   const { state, dispatch } = useOrder();
   const [formData, setFormData] = useState({
       nome: state.customer?.nome || '',
       email: state.customer?.email || '',
+      dataNascimento: state.customer?.dataNascimento || '',
       telefoneSecundario: state.customer?.telefone || '',
   });
   const [date, setDate] = useState('');
@@ -27,46 +27,24 @@ export const StepData = () => {
       .slice(0, 15);
   };
 
-  const saveFieldToSupabase = (field: string, value: string) => {
-    if (!state.leadId) return;
-    api.updateLead(state.leadId, { [field]: value });
-  };
-
-  const handleNext = async () => {
+  const handleNext = () => {
+     // Save form data to context before moving
      dispatch({
          type: 'SET_CUSTOMER',
          payload: {
-             nome: formData.nome,
-             email: formData.email,
+             ...formData,
              telefone: formData.telefoneSecundario
          }
      });
-     const scheduling = {
-         date: date,
-         timeId: selectedTime === 'Manhã' ? '1' : '2',
-         timeLabel: selectedTime || 'Comercial'
-     };
      dispatch({
          type: 'SET_SCHEDULING',
-         payload: scheduling
+         payload: { 
+             date: date, 
+             timeId: selectedTime === 'Manhã' ? '1' : '2', 
+             timeLabel: selectedTime || 'Comercial' 
+         } 
      });
      dispatch({ type: 'SET_STEP', payload: 5 });
-     // Save all data collected so far to Supabase
-     const updatedState = {
-         ...state,
-         step: 5,
-         customer: {
-             ...state.customer!,
-             nome: formData.nome,
-             email: formData.email,
-             telefone: formData.telefoneSecundario
-         },
-         scheduling
-     };
-     const savedId = await api.saveStepData(updatedState);
-     if (savedId && !state.leadId) {
-         dispatch({ type: 'SET_LEAD_ID', payload: savedId });
-     }
   };
 
   // Calendar Helpers
@@ -89,21 +67,7 @@ export const StepData = () => {
     const year = selected.getFullYear();
     const month = String(selected.getMonth() + 1).padStart(2, '0');
     const dayStr = String(day).padStart(2, '0');
-    const dateStr = `${year}-${month}-${dayStr}`;
-    setDate(dateStr);
-    if (state.leadId) {
-      api.updateLead(state.leadId, { agendamento_data: dateStr });
-    }
-  };
-
-  const handleTimeSelect = (time: string) => {
-    setSelectedTime(time);
-    if (state.leadId) {
-      api.updateLead(state.leadId, {
-        agendamento_horario_id: time === 'Manhã' ? '1' : '2',
-        agendamento_horario_label: time,
-      });
-    }
+    setDate(`${year}-${month}-${dayStr}`);
   };
 
   const renderCalendar = () => {
@@ -130,7 +94,7 @@ export const StepData = () => {
                 key={i}
                 onClick={() => !isPast && handleDateSelect(i)}
                 disabled={isPast}
-                className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full text-xs sm:text-sm font-medium transition-all
+                className={`flex h-10 w-10 items-center justify-center rounded-full text-sm font-medium transition-all
                     ${isSelected ? 'bg-brand-600 text-white shadow-md' : ''}
                     ${!isSelected && !isPast ? 'hover:bg-brand-100 text-slate-700 hover:text-brand-700' : ''}
                     ${isPast ? 'text-slate-300 cursor-not-allowed' : 'cursor-pointer'}
@@ -146,11 +110,11 @@ export const StepData = () => {
 
   const dueDates = ['05', '10', '15', '20', '25'];
 
-  const isFormValid =
-      formData.nome &&
-      formData.email &&
-      formData.telefoneSecundario &&
-      date &&
+  const isFormValid = 
+      formData.nome && 
+      formData.email && 
+      formData.dataNascimento && 
+      date && 
       selectedTime &&
       state.paymentMethod;
 
@@ -179,38 +143,55 @@ export const StepData = () => {
                 {/* Personal Data */}
                 <section>
                     <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
-                        <User className="h-5 w-5 text-slate-300" /> Dados
+                        <User className="h-5 w-5 text-slate-300" /> Dados Pessoais
                     </h4>
-                    <div className="grid gap-5 md:grid-cols-3">
+                    <div className="grid gap-5 md:grid-cols-2">
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
-                            <input
-                                type="text"
-                                value={formData.nome}
-                                onChange={e => setFormData({...formData, nome: e.target.value})}
-                                onBlur={e => saveFieldToSupabase('nome', e.target.value)}
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                            <input 
+                                type="text" 
+                                value={formData.nome} 
+                                onChange={e => setFormData({...formData, nome: e.target.value})} 
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                            />
+                        </div>
+                        <div>
+                            <label className="mb-2 block text-sm font-bold text-slate-700">Data de Nascimento</label>
+                            <input 
+                                type="date" 
+                                value={formData.dataNascimento} 
+                                onChange={e => setFormData({...formData, dataNascimento: e.target.value})} 
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                            />
+                        </div>
+                    </div>
+                </section>
+
+                 <div className="h-px bg-slate-200/60"></div>
+
+                 {/* Contact */}
+                <section>
+                    <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
+                        <Briefcase className="h-5 w-5 text-slate-300" /> Contato
+                    </h4>
+                    <div className="grid gap-5 md:grid-cols-2">
+                         <div>
+                            <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
+                            <input 
+                                type="email" 
+                                value={formData.email} 
+                                onChange={e => setFormData({...formData, email: e.target.value})} 
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
                             />
                         </div>
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Telefone Secundário</label>
-                            <input
-                                type="tel"
-                                value={formData.telefoneSecundario}
-                                onChange={e => setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)})}
-                                onBlur={e => saveFieldToSupabase('telefone', e.target.value)}
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                            <input 
+                                type="tel" 
+                                value={formData.telefoneSecundario} 
+                                onChange={e => setFormData({...formData, telefoneSecundario: handlePhoneMask(e.target.value)})} 
+                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
                                 placeholder="(00) 00000-0000"
-                            />
-                        </div>
-                        <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Email</label>
-                            <input
-                                type="email"
-                                value={formData.email}
-                                onChange={e => setFormData({...formData, email: e.target.value})}
-                                onBlur={e => saveFieldToSupabase('email', e.target.value)}
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
                             />
                         </div>
                     </div>
@@ -224,25 +205,25 @@ export const StepData = () => {
                         <Calendar className="h-5 w-5 text-slate-300" /> Agendamento da Instalação
                     </h4>
                     
-                    <div className="flex flex-col md:flex-row gap-6 md:gap-8">
+                    <div className="flex flex-col md:flex-row gap-8">
                         {/* Calendar Component */}
-                        <div className="flex-1 md:max-w-sm md:mx-0">
-                            <div className="bg-white border-2 border-slate-100 rounded-2xl sm:rounded-3xl shadow-sm p-4 sm:p-5">
+                        <div className="flex-1 max-w-sm mx-auto md:mx-0">
+                            <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-sm p-5">
                                 {/* Header */}
-                                <div className="flex items-center justify-between mb-4 sm:mb-6">
+                                <div className="flex items-center justify-between mb-6">
                                     <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                                         <ChevronLeft className="h-5 w-5 text-slate-600" />
                                     </button>
-                                    <h5 className="font-black text-slate-800 capitalize text-sm sm:text-base tracking-tight">
+                                    <h5 className="font-black text-slate-800 capitalize text-lg tracking-tight">
                                         {currentMonth.toLocaleString('pt-BR', { month: 'long', year: 'numeric' })}
                                     </h5>
                                     <button onClick={() => changeMonth(1)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
                                         <ChevronRight className="h-5 w-5 text-slate-600" />
                                     </button>
                                 </div>
-
+                                
                                 {/* Weekdays */}
-                                <div className="grid grid-cols-7 mb-2">
+                                <div className="grid grid-cols-7 mb-3">
                                     {['D', 'S', 'T', 'Q', 'Q', 'S', 'S'].map((day, i) => (
                                         <div key={i} className="text-center text-xs font-black text-slate-400 py-1">
                                             {day}
@@ -251,7 +232,7 @@ export const StepData = () => {
                                 </div>
 
                                 {/* Days Grid */}
-                                <div className="grid grid-cols-7 gap-0.5 sm:gap-1">
+                                <div className="grid grid-cols-7 gap-1">
                                     {renderCalendar()}
                                 </div>
                             </div>
@@ -280,7 +261,7 @@ export const StepData = () => {
                                         {['Manhã', 'Tarde'].map(time => (
                                             <button 
                                                 key={time} 
-                                                onClick={() => handleTimeSelect(time)}
+                                                onClick={() => setSelectedTime(time)}
                                                 className={`
                                                     relative flex items-center justify-center gap-2 rounded-2xl border-2 px-4 py-5 text-base font-black transition-all duration-300
                                                     ${selectedTime === time 
@@ -320,15 +301,12 @@ export const StepData = () => {
                                 <CalendarDays className="h-5 w-5 text-brand-500"/> 
                                 Melhor dia para vencimento
                             </label>
-                            <div className="flex flex-wrap gap-2 sm:gap-3">
+                            <div className="flex flex-wrap gap-3">
                                 {dueDates.map(day => (
                                     <button
                                         key={day}
-                                        onClick={() => {
-                                        dispatch({ type: 'SET_DUE_DATE', payload: day });
-                                        if (state.leadId) api.updateLead(state.leadId, { vencimento: day });
-                                    }}
-                                        className={`flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-xl sm:rounded-2xl border-2 font-black text-base sm:text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
+                                        onClick={() => dispatch({type: 'SET_PAYMENT', payload: { ...state.paymentMethod ? { method: state.paymentMethod } : { method: 'boleto' }, date: day } as any})}
+                                        className={`flex h-14 w-14 items-center justify-center rounded-2xl border-2 font-black text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
                                         {day}
                                     </button>
@@ -344,10 +322,7 @@ export const StepData = () => {
 
                         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                             <div 
-                                onClick={() => {
-                                    dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}});
-                                    if (state.leadId) api.updateLead(state.leadId, { forma_pagamento: 'credit_card' });
-                                }}
+                                onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}})} 
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'credit_card' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
@@ -359,10 +334,7 @@ export const StepData = () => {
                                 <p className="text-sm text-slate-500 font-medium leading-relaxed">Pagamento recorrente, não ocupa o limite total do cartão.</p>
                             </div>
                             <div 
-                                onClick={() => {
-                                    dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}});
-                                    if (state.leadId) api.updateLead(state.leadId, { forma_pagamento: 'boleto' });
-                                }}
+                                onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}})} 
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'boleto' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
@@ -378,13 +350,13 @@ export const StepData = () => {
                 </section>
 
                 {/* Continue Button */}
-                <div className="pt-6 sm:pt-8 flex flex-col sm:flex-row sm:justify-end">
+                <div className="pt-8 flex justify-end">
                     <button
                         onClick={handleNext}
                         disabled={!isFormValid}
-                        className="group w-full sm:w-auto flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                        className="group flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
-                        Revisar Pedido <ArrowRight className="h-5 w-5 sm:h-6 sm:w-6 transition-transform group-hover:translate-x-1" />
+                        Revisar Pedido <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />
                     </button>
                 </div>
 

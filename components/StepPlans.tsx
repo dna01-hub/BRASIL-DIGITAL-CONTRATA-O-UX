@@ -1,28 +1,48 @@
 import React from 'react';
 import { useOrder } from '../OrderContext';
-import { api } from '../services/api';
 import { Check, Star, CheckCircle2, Plus, Wifi, Zap, Shield } from 'lucide-react';
 import { Plan, AppOption, AdditionalService } from '../types';
 
 const plans: Plan[] = [
-  { id: 286, name: 'START', speed: 500, price: 99.90, originalPrice: 119.90, features: ['Wi-Fi 6 Grátis', 'Instalação Grátis'], appsLimit: 1 },
-  { id: 287, name: 'TURBO', speed: 700, price: 119.90, originalPrice: 149.90, features: ['Wi-Fi 6 Grátis', 'Instalação Grátis', 'IP Fixo'], appsLimit: 2, bestValue: true },
-  { id: 288, name: 'GIGA', speed: 1000, price: 149.90, originalPrice: 199.90, features: ['Wi-Fi 6 Mesh', 'Prioridade Suporte', 'IP Público'], appsLimit: 3 },
+  // Vitrine
+  { id: 1, name: 'MACETA PRO', speed: 500, price: 119.90, originalPrice: 159.90, features: ['Kaspersky', 'Ubook Go', '1 App PlayHub à escolha'], appsLimit: 1 },
+  { id: 2, name: 'MACETA PLUS', speed: 700, price: 149.90, originalPrice: 199.90, features: ['Kaspersky', 'Ubook Go', 'Câmera BRD CAM inclusa'], appsLimit: 0, bestValue: true },
+  { id: 3, name: 'MACETA PREMIUM', speed: 1000, price: 169.90, originalPrice: 219.90, features: ['Kaspersky', 'Ubook Go', 'Câmera BRD CAM inclusa'], appsLimit: 0 },
+  // Promocionais
+  { id: 4, name: 'BÁSICO', speed: 300, price: 99.90, originalPrice: 129.90, features: ['Wi-Fi 6 Incluso', 'Instalação Grátis', 'Suporte 24h'], appsLimit: 0 },
+  { id: 5, name: 'PRO GLOBOPLAY', speed: 500, price: 139.90, originalPrice: 169.90, features: ['Globoplay (com anúncios)', 'Kaspersky', 'Ubook Go'], appsLimit: 0 },
+  { id: 6, name: 'PLUS CÂMERAS', speed: 700, price: 189.90, originalPrice: 229.90, features: ['2 Câmeras BRD CAM', 'Kaspersky', 'Ubook Go'], appsLimit: 0 },
+  { id: 7, name: 'PREMIUM COMPLETO', speed: 1000, price: 209.90, originalPrice: 249.90, features: ['Globoplay (com anúncios)', '1 Câmera BRD CAM', 'Kaspersky', 'Ubook Go'], appsLimit: 0 },
 ];
 
 const availableApps: AppOption[] = [
-    { id: 'netflix', name: 'Netflix', domain: 'netflix.com', logo: 'https://logo.clearbit.com/netflix.com' },
-    { id: 'hbomax', name: 'HBO Max', domain: 'hbomax.com', logo: 'https://logo.clearbit.com/hbomax.com' },
-    { id: 'disney', name: 'Disney+', domain: 'disneyplus.com', logo: 'https://logo.clearbit.com/disneyplus.com' },
-    { id: 'paramount', name: 'Paramount+', domain: 'paramountplus.com', logo: 'https://logo.clearbit.com/paramountplus.com' },
-    { id: 'deezer', name: 'Deezer', domain: 'deezer.com', logo: 'https://logo.clearbit.com/deezer.com' },
-    { id: 'spotify', name: 'Spotify', domain: 'spotify.com', logo: 'https://logo.clearbit.com/spotify.com' },
+    { id: 'looke', name: 'Looke', logo: 'https://ui-avatars.com/api/?name=Looke&background=random' },
+    { id: 'zen', name: 'Zen', logo: 'https://ui-avatars.com/api/?name=Zen&background=random' },
+    { id: 'leitura360', name: 'Leitura 360', logo: 'https://ui-avatars.com/api/?name=Leitura+360&background=random' },
+    { id: 'exitlag', name: 'Exitlag', logo: 'https://ui-avatars.com/api/?name=Exitlag&background=random' },
+    { id: 'playlist', name: 'Playlist', logo: 'https://ui-avatars.com/api/?name=Playlist&background=random' },
+    { id: 'estudamais', name: 'Estuda+', logo: 'https://ui-avatars.com/api/?name=Estuda+&background=random' },
+    { id: 'playkids', name: 'Playkids+', logo: 'https://ui-avatars.com/api/?name=Playkids+&background=random' },
+    { id: 'ojornalista', name: 'O Jornalista', logo: 'https://ui-avatars.com/api/?name=O+Jornalista&background=random' },
+    { id: 'socialcomics', name: 'Social Comics', logo: 'https://ui-avatars.com/api/?name=Social+Comics&background=random' },
+    { id: 'pequenosleitores', name: 'Pequenos Leitores', logo: 'https://ui-avatars.com/api/?name=Pequenos+Leitores&background=random' },
+    { id: 'hub', name: 'HUB', logo: 'https://ui-avatars.com/api/?name=HUB&background=random' },
+    { id: 'bnews', name: 'Bnews', logo: 'https://ui-avatars.com/api/?name=Bnews&background=random' },
+    { id: 'huberevista', name: 'Hube Revista', logo: 'https://ui-avatars.com/api/?name=Hube+Revista&background=random' },
 ];
 
 const services: AdditionalService[] = [
-    { id: 'mesh', name: 'Ponto Ultra Mesh', price: 19.90, description: 'Amplie o sinal do Wi-Fi para a casa toda.' },
-    { id: 'ipfixo', name: 'IP Fixo Gamer', price: 29.90, description: 'Menor latência e estabilidade para jogos.' },
-    { id: 'suporte', name: 'Suporte Premium', price: 9.90, description: 'Atendimento prioritário 24h.' },
+    { id: 'disney', name: 'Disney+', price: 29.90, description: 'SVA Premium' },
+    { id: 'globoplay', name: 'Globoplay Premium', price: 22.90, description: 'SVA Premium' },
+    { id: 'telecine', name: 'Telecine', price: 14.90, description: 'SVA Premium' },
+    { id: 'deezer', name: 'Deezer', price: 9.90, description: 'SVA Premium' },
+    { id: 'hbomax', name: 'HBO Max', price: 29.90, description: 'SVA Premium' },
+    { id: 'premiere', name: 'Premiere', price: 59.90, description: 'SVA Premium' },
+    { id: 'hotgo', name: 'HotGo', price: 29.90, description: 'SVA Premium' },
+    { id: 'queimadiaria', name: 'Queima Diária', price: 29.90, description: 'SVA Premium' },
+    { id: 'smartcontent', name: 'Smart Content', price: 29.90, description: 'SVA Premium' },
+    { id: 'mesh', name: 'Rede Mesh', price: 29.90, description: 'Adicional de Infra (Combo)' },
+    { id: 'brdcam', name: 'BRD Cam adicional', price: 29.90, description: 'Adicional de Infra (Combo)' },
 ];
 
 export const StepPlans = () => {
@@ -34,49 +54,11 @@ export const StepPlans = () => {
 
   const handleSelectPlan = (plan: Plan) => {
       dispatch({ type: 'SET_PLAN', payload: plan });
-      if (state.leadId) {
-          api.updateLead(state.leadId, {
-              plano_id: plan.id,
-              plano_nome: plan.name,
-              plano_velocidade: plan.speed,
-              plano_preco: plan.price,
-              apps: [],
-          });
-      }
   };
 
-  const handleToggleApp = (app: AppOption) => {
-      const exists = state.selectedApps.find(a => a.id === app.id);
-      const limit = state.selectedPlan?.appsLimit || 0;
-      if (!exists && state.selectedApps.length >= limit) return;
-      dispatch({ type: 'TOGGLE_APP', payload: app });
-      const newApps = exists
-          ? state.selectedApps.filter(a => a.id !== app.id)
-          : [...state.selectedApps, app];
-      if (state.leadId) {
-          api.updateLead(state.leadId, { apps: newApps });
-      }
-  };
-
-  const handleToggleService = (svc: AdditionalService) => {
-      const exists = state.additionalServices.find(s => s.id === svc.id);
-      dispatch({ type: 'TOGGLE_SERVICE', payload: svc });
-      const newServices = exists
-          ? state.additionalServices.filter(s => s.id !== svc.id)
-          : [...state.additionalServices, svc];
-      if (state.leadId) {
-          api.updateLead(state.leadId, { servicos_adicionais: newServices });
-      }
-  };
-
-  const handleContinue = async () => {
+  const handleContinue = () => {
       if(state.selectedPlan && state.selectedApps.length === state.selectedPlan.appsLimit) {
         dispatch({ type: 'SET_STEP', payload: 3 });
-        // Save all data collected so far to Supabase
-        const savedId = await api.saveStepData({ ...state, step: 3 });
-        if (savedId && !state.leadId) {
-            dispatch({ type: 'SET_LEAD_ID', payload: savedId });
-        }
       }
   };
 
@@ -107,59 +89,58 @@ export const StepPlans = () => {
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* Plan Cards */}
-            <div className="grid gap-4 sm:gap-6 sm:grid-cols-1 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-3">
             {plans.map((plan) => {
                 const selected = state.selectedPlan?.id === plan.id;
                 return (
-                <div
+                <div 
                     key={plan.id}
                     onClick={() => handleSelectPlan(plan)}
-                    className={`group relative cursor-pointer overflow-hidden rounded-2xl sm:rounded-3xl border-2 bg-white p-4 sm:p-6 lg:p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.01]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
+                    className={`group relative cursor-pointer overflow-hidden rounded-3xl border-2 bg-white p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
                 >
                     {plan.bestValue && (
-                        <div className="absolute right-0 top-0 rounded-bl-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-3 py-1 text-xs font-black tracking-wider text-white shadow-sm">
+                        <div className="absolute right-0 top-0 rounded-bl-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1.5 text-xs font-black tracking-wider text-white shadow-sm">
                             MAIS VENDIDO
                         </div>
                     )}
-
-                    {/* Mobile: horizontal layout, Desktop: vertical */}
-                    <div className="flex items-center justify-between gap-4 lg:block">
-                        <div className="mb-0 lg:mb-4">
-                            <span className="text-xs font-black uppercase tracking-widest text-slate-400">{plan.name}</span>
-                            <div className="mt-1 flex items-baseline gap-1">
-                                <span className="text-4xl sm:text-5xl lg:text-6xl font-black tracking-tighter text-slate-900">{plan.speed}</span>
-                                <span className="text-base sm:text-lg font-bold text-slate-500">MEGA</span>
-                            </div>
-                        </div>
-
-                        <div className="shrink-0 lg:mb-6 rounded-xl sm:rounded-2xl bg-slate-50 px-4 py-2 sm:p-4 border border-slate-100 text-right lg:text-left">
-                            <div className="flex items-center justify-end lg:justify-start gap-2 text-xs sm:text-sm font-medium text-slate-400 line-through">
-                                De R$ {plan.originalPrice.toFixed(2).replace('.', ',')}
-                            </div>
-                            <div className="flex items-baseline justify-end lg:justify-start gap-0.5 text-brand-600">
-                                <span className="text-sm font-bold">R$</span>
-                                <span className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight">{plan.price.toFixed(2).replace('.', ',')}</span>
-                                <span className="text-xs font-bold text-slate-500">/mês</span>
-                            </div>
+                    
+                    <div className="mb-6">
+                        <span className="text-sm font-black uppercase tracking-widest text-slate-400">{plan.name}</span>
+                        <div className="mt-2 flex items-baseline gap-1">
+                            <span className="text-6xl font-black tracking-tighter text-slate-900">{plan.speed}</span>
+                            <span className="text-xl font-bold text-slate-500">MEGA</span>
                         </div>
                     </div>
 
-                    <div className="mt-3 sm:mt-4 space-y-2 sm:space-y-4 border-t border-slate-100 pt-3 sm:pt-6">
+                    <div className="mb-8 rounded-2xl bg-slate-50 p-4 border border-slate-100">
+                         <div className="flex items-center gap-2 text-sm font-medium text-slate-400 line-through">
+                             De R$ {plan.originalPrice.toFixed(2).replace('.', ',')}
+                         </div>
+                         <div className="flex items-baseline gap-1 text-brand-600">
+                             <span className="text-lg font-bold">R$</span>
+                             <span className="text-4xl font-black tracking-tight">{plan.price.toFixed(2).replace('.', ',')}</span>
+                             <span className="text-sm font-bold text-slate-500">/mês</span>
+                         </div>
+                    </div>
+
+                    <div className="space-y-4 border-t border-slate-100 pt-6">
                         {plan.features.map(f => (
-                            <div key={f} className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-medium text-slate-600">
-                                <div className="flex h-4 w-4 sm:h-5 sm:w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-emerald-500">
-                                    <Check className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <div key={f} className="flex items-center gap-3 text-sm font-medium text-slate-600">
+                                <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-500">
+                                    <Check className="h-3 w-3" />
                                 </div>
                                 {f}
                             </div>
                         ))}
-                        <div className="flex items-center gap-2 sm:gap-3 text-xs sm:text-sm font-bold text-brand-600 bg-brand-50 p-2 sm:p-3 rounded-xl border border-brand-100">
-                            <Star className="h-4 w-4 sm:h-5 sm:w-5 fill-brand-600 text-brand-600 shrink-0" />
-                            {plan.appsLimit} Apps Premium
-                        </div>
+                        {plan.appsLimit > 0 && (
+                            <div className="flex items-center gap-3 text-sm font-bold text-brand-600 bg-brand-50 p-3 rounded-xl border border-brand-100">
+                                <Star className="h-5 w-5 fill-brand-600 text-brand-600" /> 
+                                {plan.appsLimit} App Premium à escolha
+                            </div>
+                        )}
                     </div>
-
-                    <div className={`mt-4 sm:mt-6 flex h-11 sm:h-14 w-full items-center justify-center rounded-xl sm:rounded-2xl text-sm sm:text-lg font-black transition-all duration-300 ${selected ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-500 group-hover:bg-brand-100 group-hover:text-brand-700'}`}>
+                    
+                    <div className={`mt-8 flex h-14 w-full items-center justify-center rounded-2xl text-lg font-black transition-all duration-300 ${selected ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-500 group-hover:bg-brand-100 group-hover:text-brand-700'}`}>
                         {selected ? 'Selecionado' : 'Quero este'}
                     </div>
                 </div>
@@ -172,42 +153,44 @@ export const StepPlans = () => {
                 <div className="mt-10 animate-fade-in space-y-8">
                     
                     {/* APPS */}
-                    <div className="rounded-3xl border border-indigo-100 bg-indigo-50/50 p-6 md:p-8">
-                        <h4 className="mb-2 text-xl font-black text-slate-900 tracking-tight">1. Personalize seus Apps</h4>
-                        <p className="mb-8 text-slate-600 font-medium">
-                            Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativos premium</strong>. Selecione os que você mais gosta:
-                        </p>
+                    {state.selectedPlan.appsLimit > 0 && (
+                        <div className="rounded-3xl border border-indigo-100 bg-indigo-50/50 p-6 md:p-8">
+                            <h4 className="mb-2 text-xl font-black text-slate-900 tracking-tight">1. Personalize seus Apps</h4>
+                            <p className="mb-8 text-slate-600 font-medium">
+                                Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativos premium</strong>. Selecione os que você mais gosta:
+                            </p>
 
-                        <div className="grid grid-cols-3 gap-2 sm:gap-4 sm:grid-cols-3 md:grid-cols-6">
-                            {availableApps.map(app => {
-                                const isSelected = state.selectedApps.some(a => a.id === app.id);
-                                const limitReached = state.selectedApps.length >= (state.selectedPlan?.appsLimit || 0);
-                                const disabled = !isSelected && limitReached;
+                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
+                                {availableApps.map(app => {
+                                    const isSelected = state.selectedApps.some(a => a.id === app.id);
+                                    const limitReached = state.selectedApps.length >= (state.selectedPlan?.appsLimit || 0);
+                                    const disabled = !isSelected && limitReached;
 
-                                return (
-                                    <button
-                                        key={app.id}
-                                        onClick={() => !disabled && handleToggleApp(app)}
-                                        className={`relative flex flex-col items-center justify-center gap-2 sm:gap-3 rounded-xl sm:rounded-2xl border-2 p-3 sm:p-4 transition-all duration-300 ${
-                                            isSelected
-                                            ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105'
-                                            : disabled
-                                                ? 'cursor-not-allowed border-slate-200 bg-slate-100 opacity-50'
-                                                : 'cursor-pointer border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md hover:-translate-y-1'
-                                        }`}
-                                    >
-                                        {isSelected && <div className="absolute -right-1.5 -top-1.5 h-5 w-5 sm:h-6 sm:w-6 rounded-full bg-indigo-500 flex items-center justify-center shadow-sm"><Check className="w-3 h-3 sm:w-4 sm:h-4 text-white"/></div>}
-                                        <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-full overflow-hidden bg-slate-100 shadow-sm">
-                                            <img src={app.logo} alt={app.name} className="h-full w-full object-cover" onError={(e) => {
-                                                (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${app.name}&background=random`
-                                            }} />
-                                        </div>
-                                        <span className="text-xs font-bold text-slate-700 text-center leading-tight">{app.name}</span>
-                                    </button>
-                                );
-                            })}
+                                    return (
+                                        <button
+                                            key={app.id}
+                                            onClick={() => !disabled && dispatch({type: 'TOGGLE_APP', payload: app})}
+                                            className={`relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
+                                                isSelected 
+                                                ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105' 
+                                                : disabled 
+                                                    ? 'cursor-not-allowed border-slate-200 bg-slate-100 opacity-50' 
+                                                    : 'cursor-pointer border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md hover:-translate-y-1'
+                                            }`}
+                                        >
+                                            {isSelected && <div className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-indigo-500 flex items-center justify-center shadow-sm"><Check className="w-4 h-4 text-white"/></div>}
+                                            <div className="h-14 w-14 rounded-full overflow-hidden bg-slate-100 shadow-sm">
+                                                <img src={app.logo} alt={app.name} className="h-full w-full object-cover" onError={(e) => {
+                                                    (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${app.name}&background=random`
+                                                }} />
+                                            </div>
+                                            <span className="text-sm font-bold text-slate-700">{app.name}</span>
+                                        </button>
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* SERVICES */}
                     <div className="rounded-3xl border border-violet-100 bg-violet-50/50 p-6 md:p-8">
@@ -219,17 +202,17 @@ export const StepPlans = () => {
                             <span className="px-4 py-1.5 rounded-full bg-violet-200 text-violet-800 text-xs font-black uppercase tracking-wider self-start md:self-auto">Recomendado</span>
                          </div>
 
-                         <div className="grid gap-3 sm:gap-5 md:grid-cols-3">
+                         <div className="grid gap-5 md:grid-cols-3">
                             {services.map(svc => {
                                 const isAdded = state.additionalServices.some(s => s.id === svc.id);
                                 return (
-                                    <div
+                                    <div 
                                         key={svc.id}
-                                        onClick={() => handleToggleService(svc)}
-                                        className={`cursor-pointer rounded-2xl border-2 p-4 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-lg shadow-violet-500/10 scale-[1.01]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
+                                        onClick={() => dispatch({type: 'TOGGLE_SERVICE', payload: svc})}
+                                        className={`cursor-pointer rounded-2xl border-2 p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-lg shadow-violet-500/10 scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
                                     >
-                                        <div className="flex justify-between items-start mb-3 sm:mb-4">
-                                            <div className="p-2 sm:p-3 rounded-xl bg-violet-100">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="p-3 rounded-xl bg-violet-100">
                                                 {svc.id === 'mesh' ? <Wifi className="h-6 w-6 text-violet-600"/> : svc.id === 'ipfixo' ? <Zap className="h-6 w-6 text-violet-600"/> : <Shield className="h-6 w-6 text-violet-600"/>}
                                             </div>
                                             <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors ${isAdded ? 'bg-violet-600 border-violet-600' : 'border-slate-300'}`}>
@@ -245,11 +228,11 @@ export const StepPlans = () => {
                          </div>
                     </div>
 
-                    <div className="flex flex-col sm:flex-row sm:justify-end pt-4 sm:pt-6">
-                        <button
+                    <div className="flex justify-end pt-6">
+                        <button 
                              onClick={handleContinue}
                              disabled={state.selectedApps.length !== state.selectedPlan.appsLimit}
-                             className="group w-full sm:w-auto flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-8 py-4 sm:px-10 sm:py-5 text-base sm:text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+                             className="group flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                         >
                             Continuar para Análise
                         </button>

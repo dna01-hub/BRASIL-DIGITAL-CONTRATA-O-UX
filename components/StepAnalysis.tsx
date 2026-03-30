@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useOrder } from '../OrderContext';
 import { api } from '../services/api';
 import { Loader2, ShieldCheck, CheckCircle2, UserCircle2 } from 'lucide-react';
-import { OrderState } from '../types';
 
 export const StepAnalysis = () => {
   const { state, dispatch } = useOrder();
@@ -23,10 +22,9 @@ export const StepAnalysis = () => {
         const result = await api.analyzeCustomer('F', doc, phone);
         
         if (result.status === 'APROVADO') {
-            const analysisStatus = result.valor_ativacao > 0 ? 'APPROVED_WITH_TAX' : 'APPROVED';
             dispatch({
                 type: 'SET_ANALYSIS',
-                payload: { status: analysisStatus, tax: result.valor_ativacao }
+                payload: { status: result.valor_ativacao > 0 ? 'APPROVED_WITH_TAX' : 'APPROVED', tax: result.valor_ativacao }
             });
             dispatch({
                 type: 'SET_CUSTOMER',
@@ -37,25 +35,6 @@ export const StepAnalysis = () => {
                 }
             });
             dispatch({ type: 'SET_STEP', payload: 4 });
-            // Save all data collected so far to Supabase
-            const updatedState = {
-                ...state,
-                step: 4,
-                analysisStatus: analysisStatus as OrderState['analysisStatus'],
-                activationTax: result.valor_ativacao,
-                customer: {
-                    ...state.customer!,
-                    nome: result.nome_cliente || state.customer?.nome || '',
-                    cpfCnpj: doc,
-                    celular: state.customer?.celular || '',
-                    email: state.customer?.email || '',
-                    tipoPessoa: state.customer?.tipoPessoa || 'F' as const
-                }
-            };
-            const savedId = await api.saveStepData(updatedState);
-            if (savedId && !state.leadId) {
-                dispatch({ type: 'SET_LEAD_ID', payload: savedId });
-            }
         } else {
             alert('Não foi possível aprovar automaticamente. Entre em contato.');
         }

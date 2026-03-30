@@ -1,7 +1,59 @@
-html { scroll-behavior: smooth; }
-body { background-color: #f9fafb; }
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
 
-/* Custom scrollbar */
+@theme {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
+
+  --color-brand-primary: #007bff;
+  --color-brand-light: #00c6ff;
+  --color-brand-dark: #003366;
+  
+  --color-brand-cta: #10b981;
+  --color-brand-cta-hover: #059669;
+  
+  --color-brand-badge: #f59e0b;
+  
+  --color-bg-deep: #050508;
+  --color-bg-base: #0a0a12;
+  --color-bg-card: #0f1018;
+  
+  --color-text-primary: #EDEDEF;
+  --color-text-secondary: #8A8F98;
+  --color-text-muted: #5B6680;
+
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-500: #10b981;
+  --color-brand-600: #1e40af;
+  --color-brand-700: #1e3a8a;
+  --color-brand-800: #1e40af;
+  --color-brand-900: #111827;
+  --color-brand-accent: #f59e0b;
+
+  --animate-slide-down: slideDown 0.3s ease-out forwards;
+  --animate-fade-in: fadeIn 0.4s ease-out forwards;
+
+  @keyframes slideDown {
+    0% { opacity: 0; transform: translateY(-10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-bg-deep);
+  color: var(--color-text-primary);
+}
+
+/* Custom scrollbar for a cleaner look */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
@@ -10,4 +62,47 @@ body { background-color: #f9fafb; }
 .step-content {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   overflow: hidden;
+}
+
+/* Ambient glow blobs */
+.ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--color-brand-primary) 0%, transparent 70%);
+  opacity: 0.1;
+  filter: blur(80px);
+  animation: float 25s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes float {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  33% { transform: translate(30px, -50px) scale(1.1); }
+  66% { transform: translate(-20px, 20px) scale(0.9); }
+}
+
+/* Grid overlay */
+.grid-overlay {
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+                    linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Speed dial rings */
+.speed-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px dashed rgba(255,255,255,0.1);
+  animation: spin linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
