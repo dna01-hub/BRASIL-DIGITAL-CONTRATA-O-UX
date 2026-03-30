@@ -6,39 +6,39 @@ import { Tag, PlaySquare, Camera } from 'lucide-react';
 export const Promocoes = () => {
   const promos = [
     {
-      id: 'basico',
-      name: 'BÁSICO',
-      speed: '300 Mega',
-      price: '99,90',
-      tag: 'ECONOMIA',
-      features: ['Wi-Fi 6 Incluso', 'Instalação Grátis', 'Suporte 24h'],
-      icon: PlaySquare
-    },
-    {
       id: 'pro-globoplay',
       name: 'PRO GLOBOPLAY',
       speed: '500 Mega',
-      price: '139,90',
+      price: '129,90',
       tag: 'GLOBOPLAY',
-      features: ['Globoplay (com anúncios)', 'Kaspersky', 'Ubook Go'],
+      features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'],
       icon: PlaySquare
     },
     {
-      id: 'plus-cameras',
-      name: 'PLUS CÂMERAS',
-      speed: '700 Mega',
-      price: '189,90',
-      tag: '2 CÂMERAS',
-      features: ['2 Câmeras BRD CAM', 'Kaspersky', 'Ubook Go'],
+      id: 'pro-basic-cam',
+      name: 'PRO BASIC CAM',
+      speed: '500 Mega',
+      price: '139,90',
+      tag: 'CÂMERA',
+      features: ['Kaspersky', 'Ubook Go', 'BRD CAM inclusa'],
       icon: Camera
     },
     {
-      id: 'premium-completo',
-      name: 'PREMIUM COMPLETO',
-      speed: '1 Giga',
-      price: '209,90',
-      tag: 'COMPLETO',
-      features: ['Globoplay (com anúncios)', '1 Câmera BRD CAM', 'Kaspersky', 'Ubook Go'],
+      id: 'plus-globoplay',
+      name: 'PLUS GLOBOPLAY',
+      speed: '700 Mega',
+      price: '159,90',
+      tag: 'GLOBOPLAY',
+      features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'],
+      icon: PlaySquare
+    },
+    {
+      id: 'premium-globoplay',
+      name: 'PREMIUM GLOBOPLAY',
+      speed: '1000 Mega',
+      price: '179,90',
+      tag: 'GLOBOPLAY',
+      features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'],
       icon: PlaySquare
     }
   ];

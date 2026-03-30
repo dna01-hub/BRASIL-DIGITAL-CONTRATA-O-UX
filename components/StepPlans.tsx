@@ -9,10 +9,10 @@ const plans: Plan[] = [
   { id: 2, name: 'MACETA PLUS', speed: 700, price: 149.90, originalPrice: 199.90, features: ['Kaspersky', 'Ubook Go', 'Câmera BRD CAM inclusa'], appsLimit: 0, bestValue: true },
   { id: 3, name: 'MACETA PREMIUM', speed: 1000, price: 169.90, originalPrice: 219.90, features: ['Kaspersky', 'Ubook Go', 'Câmera BRD CAM inclusa'], appsLimit: 0 },
   // Promocionais
-  { id: 4, name: 'BÁSICO', speed: 300, price: 99.90, originalPrice: 129.90, features: ['Wi-Fi 6 Incluso', 'Instalação Grátis', 'Suporte 24h'], appsLimit: 0 },
-  { id: 5, name: 'PRO GLOBOPLAY', speed: 500, price: 139.90, originalPrice: 169.90, features: ['Globoplay (com anúncios)', 'Kaspersky', 'Ubook Go'], appsLimit: 0 },
-  { id: 6, name: 'PLUS CÂMERAS', speed: 700, price: 189.90, originalPrice: 229.90, features: ['2 Câmeras BRD CAM', 'Kaspersky', 'Ubook Go'], appsLimit: 0 },
-  { id: 7, name: 'PREMIUM COMPLETO', speed: 1000, price: 209.90, originalPrice: 249.90, features: ['Globoplay (com anúncios)', '1 Câmera BRD CAM', 'Kaspersky', 'Ubook Go'], appsLimit: 0 },
+  { id: 4, name: 'PRO GLOBOPLAY', speed: 500, price: 129.90, originalPrice: 159.90, features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'], appsLimit: 0 },
+  { id: 5, name: 'PRO BASIC CAM', speed: 500, price: 139.90, originalPrice: 159.90, features: ['Kaspersky', 'Ubook Go', 'BRD CAM inclusa'], appsLimit: 0 },
+  { id: 6, name: 'PLUS GLOBOPLAY', speed: 700, price: 159.90, originalPrice: 199.90, features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'], appsLimit: 0 },
+  { id: 7, name: 'PREMIUM GLOBOPLAY', speed: 1000, price: 179.90, originalPrice: 219.90, features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'], appsLimit: 0 },
 ];
 
 const availableApps: AppOption[] = [
@@ -231,7 +231,7 @@ export const StepPlans = () => {
                     <div className="flex justify-end pt-6">
                         <button 
                              onClick={handleContinue}
-                             disabled={state.selectedApps.length !== state.selectedPlan.appsLimit}
+                             disabled={state.selectedPlan.appsLimit > 0 && state.selectedApps.length !== state.selectedPlan.appsLimit}
                              className="group flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                         >
                             Continuar para Análise
