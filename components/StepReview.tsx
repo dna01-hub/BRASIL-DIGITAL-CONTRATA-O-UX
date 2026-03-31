@@ -162,44 +162,48 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                     </h4>
                     
                     <div className="rounded-3xl border-2 border-slate-200 overflow-hidden">
-                        <table className="w-full text-sm text-left">
-                            <thead className="bg-slate-50 text-slate-500 font-bold uppercase tracking-wider text-xs">
-                                <tr>
-                                    <th className="p-5">Produto / Serviço</th>
-                                    <th className="p-5 text-right">Valor Mensal</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {/* Plano Base */}
-                                <tr className="bg-white">
-                                    <td className="p-5">
-                                        <p className="font-black text-slate-900 text-xl tracking-tight">{state.selectedPlan?.name} {state.selectedPlan?.speed} MEGA</p>
-                                        <p className="text-sm text-slate-500 mt-2 flex items-center gap-3 font-medium">
-                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500"/> Wi-Fi 6 Incluso</span>
-                                            <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500"/> Instalação Grátis</span>
-                                        </p>
-                                    </td>
-                                    <td className="p-5 text-right font-black text-slate-900 text-xl tracking-tight">R$ {state.selectedPlan?.price.toFixed(2).replace('.', ',')}</td>
-                                </tr>
-                                
-                                {/* Adicionais */}
-                                {state.additionalServices.map(svc => (
-                                    <tr key={svc.id} className="bg-white">
-                                        <td className="p-5">
-                                            <p className="font-bold text-slate-800 text-base">{svc.name}</p>
-                                            <p className="text-sm text-slate-500 mt-1 font-medium">{svc.description}</p>
-                                        </td>
-                                        <td className="p-5 text-right font-bold text-indigo-600 text-base">+ R$ {svc.price.toFixed(2).replace('.', ',')}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                            <tfoot className="bg-slate-900 text-white">
-                                <tr>
-                                    <td className="p-6 font-bold uppercase text-sm tracking-widest text-slate-400">Total Mensal</td>
-                                    <td className="p-6 text-right font-black text-3xl tracking-tighter">R$ {finalTotal.toFixed(2).replace('.', ',')}</td>
-                                </tr>
-                            </tfoot>
-                        </table>
+                        {/* Header (Hidden on mobile) */}
+                        <div className="hidden sm:flex justify-between bg-slate-50 p-5 text-slate-500 font-bold uppercase tracking-wider text-xs border-b border-slate-100">
+                            <span>Produto / Serviço</span>
+                            <span>Valor Mensal</span>
+                        </div>
+                        
+                        <div className="divide-y divide-slate-100">
+                            {/* Plano Base */}
+                            <div className="bg-white p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                                <div>
+                                    <p className="font-black text-slate-900 text-lg sm:text-xl tracking-tight">{state.selectedPlan?.name} {state.selectedPlan?.speed} MEGA</p>
+                                    <div className="text-sm text-slate-500 mt-2 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 font-medium">
+                                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0"/> Wi-Fi 6 Incluso</span>
+                                        <span className="flex items-center gap-1.5"><CheckCircle2 className="h-4 w-4 text-emerald-500 shrink-0"/> Instalação Grátis</span>
+                                    </div>
+                                </div>
+                                <div className="font-black text-slate-900 text-xl tracking-tight sm:text-right">
+                                    <span className="sm:hidden text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1">Valor Mensal</span>
+                                    R$ {state.selectedPlan?.price.toFixed(2).replace('.', ',')}
+                                </div>
+                            </div>
+                            
+                            {/* Adicionais */}
+                            {state.additionalServices.map(svc => (
+                                <div key={svc.id} className="bg-white p-5 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                                    <div>
+                                        <p className="font-bold text-slate-800 text-base">{svc.name}</p>
+                                        <p className="text-sm text-slate-500 mt-1 font-medium">{svc.description}</p>
+                                    </div>
+                                    <div className="font-bold text-indigo-600 text-base sm:text-right">
+                                        <span className="sm:hidden text-xs text-slate-500 uppercase tracking-wider font-bold block mb-1">Valor Adicional</span>
+                                        + R$ {svc.price.toFixed(2).replace('.', ',')}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                        
+                        {/* Footer */}
+                        <div className="bg-slate-900 text-white p-5 sm:p-6 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0">
+                            <span className="font-bold uppercase text-sm tracking-widest text-slate-400">Total Mensal</span>
+                            <span className="font-black text-3xl tracking-tighter">R$ {finalTotal.toFixed(2).replace('.', ',')}</span>
+                        </div>
                     </div>
                 </div>
 
@@ -210,13 +214,13 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                              <CreditCard className="h-5 w-5 text-slate-300" /> Detalhes Financeiros
                         </h4>
                         <div className="bg-white p-5 rounded-3xl border-2 border-slate-200 text-sm space-y-4">
-                             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-100 pb-3 gap-2">
                                  <span className="text-slate-600 font-medium">Forma de Pagamento</span>
-                                 <span className="font-black text-slate-900 bg-slate-100 px-3 py-1.5 rounded-lg">
+                                 <span className="font-black text-slate-900 bg-slate-100 px-3 py-1.5 rounded-lg w-fit">
                                      {state.paymentMethod === 'credit_card' ? 'Cartão de Crédito' : state.paymentMethod === 'boleto' ? 'Boleto Digital' : 'Não selecionado'}
                                  </span>
                              </div>
-                             <div className="flex justify-between items-center border-b border-slate-100 pb-3">
+                             <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center border-b border-slate-100 pb-3 gap-2">
                                  <span className="text-slate-600 font-medium">Dia de Vencimento</span>
                                  <span className="font-black text-brand-600 text-base">Todo dia {state.dueDate}</span>
                              </div>
@@ -253,8 +257,8 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                 {/* Terms */}
                 <div className="space-y-3">
                     <div className={`rounded-3xl border-2 p-5 transition-colors ${showErrors && !acceptedTerms ? 'border-red-500 bg-red-50' : 'border-slate-200 bg-slate-50 hover:border-brand-300'}`}>
-                        <label className="flex items-start gap-4 cursor-pointer">
-                            <div className="relative flex items-center pt-1">
+                        <label className="flex items-start gap-3 sm:gap-4 cursor-pointer">
+                            <div className="relative flex items-center pt-1 shrink-0">
                                 <input 
                                     type="checkbox" 
                                     checked={acceptedTerms}
