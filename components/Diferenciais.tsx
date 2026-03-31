@@ -31,7 +31,7 @@ export const Diferenciais = () => {
     },
     {
       icon: Wrench,
-      title: 'Instalação grátis',
+      title: 'Instalação ágil',
       description: 'Agendada em até 7 dias úteis. Técnico uniformizado e identificado.'
     }
   ];
@@ -46,7 +46,7 @@ export const Diferenciais = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="text-4xl md:text-5xl font-display font-black tracking-tight text-white mb-6 leading-tight"
+            className="text-4xl md:text-5xl font-display font-black tracking-tight text-text-primary mb-6 leading-tight"
           >
             Infraestrutura de operadora, atendimento de vizinho.
           </motion.h2>
@@ -69,12 +69,12 @@ export const Diferenciais = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-50px" }}
               transition={{ duration: 0.5, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className="group flex flex-col items-start"
+              className="group flex flex-col items-center text-center"
             >
-              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/5 border border-white/10 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/30 transition-colors duration-300">
-                <feature.icon className="h-6 w-6 text-brand-light" />
+              <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-text-primary/5 border border-text-primary/10 group-hover:bg-brand-primary/10 group-hover:border-brand-primary/30 transition-colors duration-300">
+                <feature.icon className="h-6 w-6 text-brand-primary" />
               </div>
-              <h3 className="text-xl font-display font-bold text-white mb-3 group-hover:text-brand-light transition-colors duration-300">
+              <h3 className="text-xl font-display font-bold text-text-primary mb-3 group-hover:text-brand-primary transition-colors duration-300">
                 {feature.title}
               </h3>
               <p className="text-base text-text-secondary leading-relaxed">

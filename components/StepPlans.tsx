@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useOrder } from '../OrderContext';
 import { Check, Star, CheckCircle2, Plus, Wifi, Zap, Shield } from 'lucide-react';
 import { Plan, AppOption, AdditionalService } from '../types';
@@ -17,23 +17,24 @@ const plans: Plan[] = [
 
 const availableApps: AppOption[] = [
     { id: 'looke', name: 'Looke', logo: 'https://ui-avatars.com/api/?name=Looke&background=random' },
-    { id: 'zen', name: 'Zen', logo: 'https://ui-avatars.com/api/?name=Zen&background=random' },
     { id: 'leitura360', name: 'Leitura 360', logo: 'https://ui-avatars.com/api/?name=Leitura+360&background=random' },
-    { id: 'exitlag', name: 'Exitlag', logo: 'https://ui-avatars.com/api/?name=Exitlag&background=random' },
-    { id: 'playlist', name: 'Playlist', logo: 'https://ui-avatars.com/api/?name=Playlist&background=random' },
-    { id: 'estudamais', name: 'Estuda+', logo: 'https://ui-avatars.com/api/?name=Estuda+&background=random' },
-    { id: 'playkids', name: 'Playkids+', logo: 'https://ui-avatars.com/api/?name=Playkids+&background=random' },
-    { id: 'ojornalista', name: 'O Jornalista', logo: 'https://ui-avatars.com/api/?name=O+Jornalista&background=random' },
+    { id: 'indie', name: 'Indie', logo: 'https://ui-avatars.com/api/?name=Indie&background=random' },
+    { id: 'leitura', name: 'Leitura', logo: 'https://ui-avatars.com/api/?name=Leitura&background=random' },
+    { id: 'curtaon', name: 'Curta!On', logo: 'https://ui-avatars.com/api/?name=Curta!On&background=random' },
+    { id: 'fluid', name: 'Fluid', logo: 'https://ui-avatars.com/api/?name=Fluid&background=random' },
+    { id: 'kiddlepass', name: 'Kiddle Pass', logo: 'https://ui-avatars.com/api/?name=Kiddle+Pass&background=random' },
+    { id: 'j', name: 'J', logo: 'https://ui-avatars.com/api/?name=J&background=random' },
     { id: 'socialcomics', name: 'Social Comics', logo: 'https://ui-avatars.com/api/?name=Social+Comics&background=random' },
     { id: 'pequenosleitores', name: 'Pequenos Leitores', logo: 'https://ui-avatars.com/api/?name=Pequenos+Leitores&background=random' },
-    { id: 'hub', name: 'HUB', logo: 'https://ui-avatars.com/api/?name=HUB&background=random' },
-    { id: 'bnews', name: 'Bnews', logo: 'https://ui-avatars.com/api/?name=Bnews&background=random' },
-    { id: 'huberevista', name: 'Hube Revista', logo: 'https://ui-avatars.com/api/?name=Hube+Revista&background=random' },
+    { id: 'hubvantagens', name: 'HUB Vantagens', logo: 'https://ui-avatars.com/api/?name=HUB+Vantagens&background=random' },
+    { id: 'pkplus', name: 'PK+', logo: 'https://ui-avatars.com/api/?name=PK%2B&background=random' },
+    { id: 'exitlag', name: 'Exitlag', logo: 'https://ui-avatars.com/api/?name=Exitlag&background=random' },
+    { id: 'zen', name: 'Zen', logo: 'https://ui-avatars.com/api/?name=Zen&background=random' },
 ];
 
 const services: AdditionalService[] = [
     { id: 'disney', name: 'Disney+', price: 29.90, description: 'SVA Premium' },
-    { id: 'globoplay', name: 'Globoplay Premium', price: 22.90, description: 'SVA Premium' },
+    { id: 'globoplay', name: 'Globoplay', price: 22.90, description: 'SVA Premium' },
     { id: 'telecine', name: 'Telecine', price: 14.90, description: 'SVA Premium' },
     { id: 'deezer', name: 'Deezer', price: 9.90, description: 'SVA Premium' },
     { id: 'hbomax', name: 'HBO Max', price: 29.90, description: 'SVA Premium' },
@@ -43,10 +44,17 @@ const services: AdditionalService[] = [
     { id: 'smartcontent', name: 'Smart Content', price: 29.90, description: 'SVA Premium' },
     { id: 'mesh', name: 'Rede Mesh', price: 29.90, description: 'Adicional de Infra (Combo)' },
     { id: 'brdcam', name: 'BRD Cam adicional', price: 29.90, description: 'Adicional de Infra (Combo)' },
+    ...availableApps.map(app => ({
+        id: `${app.id}_sva`,
+        name: app.name,
+        price: 10.00,
+        description: 'App Playhub Adicional'
+    }))
 ];
 
 export const StepPlans = () => {
   const { state, dispatch } = useOrder();
+  const [showErrors, setShowErrors] = useState(false);
   
   const isActive = state.step === 2;
   const isCompleted = state.step > 2;
@@ -58,7 +66,10 @@ export const StepPlans = () => {
 
   const handleContinue = () => {
       if(state.selectedPlan && state.selectedApps.length === state.selectedPlan.appsLimit) {
+        setShowErrors(false);
         dispatch({ type: 'SET_STEP', payload: 3 });
+      } else {
+        setShowErrors(true);
       }
   };
 
@@ -85,18 +96,18 @@ export const StepPlans = () => {
       </div>
 
       {/* Content */}
-      <div className={`transition-all duration-700 ease-in-out ${isActive ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-700 ease-in-out ${isActive ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* Plan Cards */}
-            <div className="grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-2">
             {plans.map((plan) => {
                 const selected = state.selectedPlan?.id === plan.id;
                 return (
                 <div 
                     key={plan.id}
                     onClick={() => handleSelectPlan(plan)}
-                    className={`group relative cursor-pointer overflow-hidden rounded-3xl border-2 bg-white p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
+                    className={`group relative flex h-full flex-col cursor-pointer overflow-hidden rounded-3xl border-2 bg-white p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
                 >
                     {plan.bestValue && (
                         <div className="absolute right-0 top-0 rounded-bl-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1.5 text-xs font-black tracking-wider text-white shadow-sm">
@@ -123,7 +134,7 @@ export const StepPlans = () => {
                          </div>
                     </div>
 
-                    <div className="space-y-4 border-t border-slate-100 pt-6">
+                    <div className="flex-1 space-y-4 border-t border-slate-100 pt-6">
                         {plan.features.map(f => (
                             <div key={f} className="flex items-center gap-3 text-sm font-medium text-slate-600">
                                 <div className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 text-emerald-500">
@@ -132,12 +143,6 @@ export const StepPlans = () => {
                                 {f}
                             </div>
                         ))}
-                        {plan.appsLimit > 0 && (
-                            <div className="flex items-center gap-3 text-sm font-bold text-brand-600 bg-brand-50 p-3 rounded-xl border border-brand-100">
-                                <Star className="h-5 w-5 fill-brand-600 text-brand-600" /> 
-                                {plan.appsLimit} App Premium à escolha
-                            </div>
-                        )}
                     </div>
                     
                     <div className={`mt-8 flex h-14 w-full items-center justify-center rounded-2xl text-lg font-black transition-all duration-300 ${selected ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-500 group-hover:bg-brand-100 group-hover:text-brand-700'}`}>
@@ -154,10 +159,10 @@ export const StepPlans = () => {
                     
                     {/* APPS */}
                     {state.selectedPlan.appsLimit > 0 && (
-                        <div className="rounded-3xl border border-indigo-100 bg-indigo-50/50 p-6 md:p-8">
+                        <div className={`rounded-3xl border p-6 md:p-8 transition-colors ${showErrors && state.selectedApps.length !== state.selectedPlan.appsLimit ? 'border-red-500 bg-red-50' : 'border-indigo-100 bg-indigo-50/50'}`}>
                             <h4 className="mb-2 text-xl font-black text-slate-900 tracking-tight">1. Personalize seus Apps</h4>
                             <p className="mb-8 text-slate-600 font-medium">
-                                Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativos premium</strong>. Selecione os que você mais gosta:
+                                Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativo{state.selectedPlan.appsLimit > 1 ? 's' : ''} Playhub</strong>. Selecione o{state.selectedPlan.appsLimit > 1 ? 's' : ''} que você mais gosta:
                             </p>
 
                             <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
@@ -169,7 +174,12 @@ export const StepPlans = () => {
                                     return (
                                         <button
                                             key={app.id}
-                                            onClick={() => !disabled && dispatch({type: 'TOGGLE_APP', payload: app})}
+                                            onClick={() => {
+                                                if (!disabled) {
+                                                    dispatch({type: 'TOGGLE_APP', payload: app});
+                                                    if (showErrors) setShowErrors(false);
+                                                }
+                                            }}
                                             className={`relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
                                                 isSelected 
                                                 ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105' 
@@ -184,11 +194,20 @@ export const StepPlans = () => {
                                                     (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${app.name}&background=random`
                                                 }} />
                                             </div>
-                                            <span className="text-sm font-bold text-slate-700">{app.name}</span>
+                                            <span className="text-sm font-bold text-slate-700 text-center leading-tight">{app.name}</span>
                                         </button>
                                     );
                                 })}
                             </div>
+                            
+                            {showErrors && state.selectedApps.length !== state.selectedPlan.appsLimit && (
+                                <div className="mt-6 flex items-center gap-3 rounded-xl bg-red-100 p-4 text-red-600">
+                                    <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-red-200 font-bold">!</div>
+                                    <p className="text-sm font-bold">
+                                        Por favor, selecione {state.selectedPlan.appsLimit} aplicativo{state.selectedPlan.appsLimit > 1 ? 's' : ''} Playhub para continuar.
+                                    </p>
+                                </div>
+                            )}
                         </div>
                     )}
 
@@ -202,7 +221,7 @@ export const StepPlans = () => {
                             <span className="px-4 py-1.5 rounded-full bg-violet-200 text-violet-800 text-xs font-black uppercase tracking-wider self-start md:self-auto">Recomendado</span>
                          </div>
 
-                         <div className="grid gap-5 md:grid-cols-3">
+                         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
                             {services.map(svc => {
                                 const isAdded = state.additionalServices.some(s => s.id === svc.id);
                                 return (
@@ -213,7 +232,7 @@ export const StepPlans = () => {
                                     >
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="p-3 rounded-xl bg-violet-100">
-                                                {svc.id === 'mesh' ? <Wifi className="h-6 w-6 text-violet-600"/> : svc.id === 'ipfixo' ? <Zap className="h-6 w-6 text-violet-600"/> : <Shield className="h-6 w-6 text-violet-600"/>}
+                                                {svc.id === 'mesh' ? <Wifi className="h-6 w-6 text-violet-600"/> : svc.description.includes('SVA') ? <Star className="h-6 w-6 text-violet-600"/> : <Shield className="h-6 w-6 text-violet-600"/>}
                                             </div>
                                             <div className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors ${isAdded ? 'bg-violet-600 border-violet-600' : 'border-slate-300'}`}>
                                                 {isAdded && <Check className="h-4 w-4 text-white"/>}
@@ -231,7 +250,6 @@ export const StepPlans = () => {
                     <div className="flex justify-end pt-6">
                         <button 
                              onClick={handleContinue}
-                             disabled={state.selectedPlan.appsLimit > 0 && state.selectedApps.length !== state.selectedPlan.appsLimit}
                              className="group flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                         >
                             Continuar para Análise

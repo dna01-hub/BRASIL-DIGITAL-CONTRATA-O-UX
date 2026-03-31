@@ -7,11 +7,11 @@ export const StepData = () => {
   const [formData, setFormData] = useState({
       nome: state.customer?.nome || '',
       email: state.customer?.email || '',
-      dataNascimento: state.customer?.dataNascimento || '',
       telefoneSecundario: state.customer?.telefone || '',
   });
-  const [date, setDate] = useState('');
-  const [selectedTime, setSelectedTime] = useState<string>(''); // Local state for time selection styling
+  const [date, setDate] = useState(state.scheduling?.date || '');
+  const [selectedTime, setSelectedTime] = useState<string>(state.scheduling?.period || ''); // Local state for time selection styling
+  const [showErrors, setShowErrors] = useState(false);
   
   // Calendar State
   const [currentMonth, setCurrentMonth] = useState(new Date());
@@ -28,6 +28,11 @@ export const StepData = () => {
   };
 
   const handleNext = () => {
+     if (!isFormValid) {
+         setShowErrors(true);
+         return;
+     }
+     setShowErrors(false);
      // Save form data to context before moving
      dispatch({
          type: 'SET_CUSTOMER',
@@ -40,6 +45,7 @@ export const StepData = () => {
          type: 'SET_SCHEDULING',
          payload: { 
              date: date, 
+             period: selectedTime, 
              timeId: selectedTime === 'Manhã' ? '1' : '2', 
              timeLabel: selectedTime || 'Comercial' 
          } 
@@ -74,8 +80,18 @@ export const StepData = () => {
     const days = getDaysInMonth(currentMonth);
     const firstDay = getFirstDayOfMonth(currentMonth);
     const daysArray = [];
-    const today = new Date();
-    today.setHours(0,0,0,0);
+
+    const now = new Date();
+    const pvTimeStr = now.toLocaleString('en-US', { timeZone: 'America/Porto_Velho', hour12: false });
+    const [datePart, timePart] = pvTimeStr.split(', ');
+    const [month, day, year] = datePart.split('/');
+    const [hourStr] = timePart.split(':');
+    
+    let pvHour = parseInt(hourStr, 10);
+    if (pvHour === 24) pvHour = 0;
+    
+    const pvDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+    const today = new Date(`${pvDateString}T00:00:00`);
 
     // Empty slots for previous month
     for (let i = 0; i < firstDay; i++) {
@@ -87,7 +103,11 @@ export const StepData = () => {
         const currentDate = new Date(currentMonth.getFullYear(), currentMonth.getMonth(), i);
         const dateStr = `${currentDate.getFullYear()}-${String(currentDate.getMonth() + 1).padStart(2, '0')}-${String(i).padStart(2, '0')}`;
         const isSelected = date === dateStr;
-        const isPast = currentDate < today;
+        
+        let isPast = currentDate < today;
+        if (dateStr === pvDateString && pvHour >= 18) {
+            isPast = true;
+        }
 
         daysArray.push(
             <button
@@ -98,7 +118,7 @@ export const StepData = () => {
                     ${isSelected ? 'bg-brand-600 text-white shadow-md' : ''}
                     ${!isSelected && !isPast ? 'hover:bg-brand-100 text-slate-700 hover:text-brand-700' : ''}
                     ${isPast ? 'text-slate-300 cursor-not-allowed' : 'cursor-pointer'}
-                    ${!isSelected && currentDate.getTime() === today.getTime() ? 'border border-brand-500 text-brand-600 font-bold' : ''}
+                    ${!isSelected && dateStr === pvDateString && !isPast ? 'border border-brand-500 text-brand-600 font-bold' : ''}
                 `}
             >
                 {i}
@@ -110,13 +130,34 @@ export const StepData = () => {
 
   const dueDates = ['05', '10', '15', '20', '25'];
 
+  const isTimeDisabled = (time: string) => {
+      if (!date) return false;
+      
+      const now = new Date();
+      const pvTimeStr = now.toLocaleString('en-US', { timeZone: 'America/Porto_Velho', hour12: false });
+      const [datePart, timePart] = pvTimeStr.split(', ');
+      const [month, day, year] = datePart.split('/');
+      const [hourStr] = timePart.split(':');
+      
+      let hour = parseInt(hourStr, 10);
+      if (hour === 24) hour = 0;
+      
+      const pvDateString = `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      
+      if (date === pvDateString) {
+          if (time === 'Manhã' && hour >= 12) return true;
+          if (time === 'Tarde' && hour >= 18) return true;
+      }
+      return false;
+  };
+
   const isFormValid = 
-      formData.nome && 
-      formData.email && 
-      formData.dataNascimento && 
+      formData.nome.trim().length > 3 && 
+      formData.email.includes('@') && 
       date && 
       selectedTime &&
-      state.paymentMethod;
+      state.paymentMethod &&
+      state.dueDate;
 
   return (
     <div className={`relative overflow-hidden rounded-3xl border bg-white transition-all duration-500 ${isActive ? 'ring-4 ring-brand-500/20 shadow-2xl border-brand-500 mt-6' : 'border-slate-200 shadow-sm mt-4'}`}>
@@ -145,24 +186,18 @@ export const StepData = () => {
                     <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
                         <User className="h-5 w-5 text-slate-300" /> Dados Pessoais
                     </h4>
-                    <div className="grid gap-5 md:grid-cols-2">
+                    <div className="grid gap-5 md:grid-cols-1">
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
                             <input 
                                 type="text" 
                                 value={formData.nome} 
-                                onChange={e => setFormData({...formData, nome: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                                onChange={e => {setFormData({...formData, nome: e.target.value}); if(showErrors) setShowErrors(false);}} 
+                                className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && formData.nome.trim().length <= 3 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
                             />
-                        </div>
-                        <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Data de Nascimento</label>
-                            <input 
-                                type="date" 
-                                value={formData.dataNascimento} 
-                                onChange={e => setFormData({...formData, dataNascimento: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
-                            />
+                            {showErrors && formData.nome.trim().length <= 3 && (
+                                <span className="text-red-500 text-xs font-bold mt-1 block">Preencha seu nome completo</span>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -180,9 +215,12 @@ export const StepData = () => {
                             <input 
                                 type="email" 
                                 value={formData.email} 
-                                onChange={e => setFormData({...formData, email: e.target.value})} 
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400" 
+                                onChange={e => {setFormData({...formData, email: e.target.value}); if(showErrors) setShowErrors(false);}} 
+                                className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && (!formData.email || !formData.email.includes('@')) ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
                             />
+                            {showErrors && (!formData.email || !formData.email.includes('@')) && (
+                                <span className="text-red-500 text-xs font-bold mt-1 block">Preencha um email válido</span>
+                            )}
                         </div>
                         <div>
                             <label className="mb-2 block text-sm font-bold text-slate-700">Telefone Secundário</label>
@@ -208,7 +246,7 @@ export const StepData = () => {
                     <div className="flex flex-col md:flex-row gap-8">
                         {/* Calendar Component */}
                         <div className="flex-1 max-w-sm mx-auto md:mx-0">
-                            <div className="bg-white border-2 border-slate-100 rounded-3xl shadow-sm p-5">
+                            <div className={`bg-white border-2 rounded-3xl shadow-sm p-5 transition-colors ${showErrors && !date ? 'border-red-500' : 'border-slate-100'}`}>
                                 {/* Header */}
                                 <div className="flex items-center justify-between mb-6">
                                     <button onClick={() => changeMonth(-1)} className="p-2 hover:bg-slate-100 rounded-full transition-colors">
@@ -236,6 +274,9 @@ export const StepData = () => {
                                     {renderCalendar()}
                                 </div>
                             </div>
+                            {showErrors && !date && (
+                                <span className="text-red-500 text-xs font-bold mt-2 block text-center">Selecione uma data para instalação</span>
+                            )}
                         </div>
 
                         {/* Time Selection */}
@@ -257,29 +298,36 @@ export const StepData = () => {
                                             {new Date(date + 'T12:00:00').toLocaleDateString('pt-BR')}
                                         </span>
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
-                                        {['Manhã', 'Tarde'].map(time => (
+                                    <div className={`grid grid-cols-2 gap-4 p-2 rounded-2xl ${showErrors && !selectedTime ? 'border-2 border-red-500' : ''}`}>
+                                        {['Manhã', 'Tarde'].map(time => {
+                                            const disabled = isTimeDisabled(time);
+                                            return (
                                             <button 
                                                 key={time} 
-                                                onClick={() => setSelectedTime(time)}
+                                                disabled={disabled}
+                                                onClick={() => {setSelectedTime(time); if(showErrors) setShowErrors(false);}}
                                                 className={`
                                                     relative flex items-center justify-center gap-2 rounded-2xl border-2 px-4 py-5 text-base font-black transition-all duration-300
-                                                    ${selectedTime === time 
+                                                    ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-50 border-slate-200 text-slate-400' : 
+                                                        selectedTime === time 
                                                         ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' 
                                                         : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'
                                                     }
                                                 `}
                                             >
                                                 {time}
-                                                {selectedTime === time && (
+                                                {selectedTime === time && !disabled && (
                                                     <div className="absolute right-3 top-3 h-2.5 w-2.5 rounded-full bg-brand-500"></div>
                                                 )}
                                             </button>
-                                        ))}
+                                        )})}
                                     </div>
                                     <p className="text-xs text-slate-400 mt-3 font-medium">
                                         * A equipe confirmará o horário exato via WhatsApp.
                                     </p>
+                                    {showErrors && !selectedTime && (
+                                        <span className="text-red-500 text-xs font-bold mt-1 block">Selecione um período</span>
+                                    )}
                                 </div>
                             )}
                         </div>
@@ -301,17 +349,23 @@ export const StepData = () => {
                                 <CalendarDays className="h-5 w-5 text-brand-500"/> 
                                 Melhor dia para vencimento
                             </label>
-                            <div className="flex flex-wrap gap-3">
+                            <div className={`flex flex-wrap gap-3 p-2 rounded-2xl ${showErrors && !state.dueDate ? 'border-2 border-red-500' : ''}`}>
                                 {dueDates.map(day => (
                                     <button
                                         key={day}
-                                        onClick={() => dispatch({type: 'SET_PAYMENT', payload: { ...state.paymentMethod ? { method: state.paymentMethod } : { method: 'boleto' }, date: day } as any})}
+                                        onClick={() => {
+                                            dispatch({type: 'SET_PAYMENT', payload: { method: state.paymentMethod, date: day } as any});
+                                            if(showErrors) setShowErrors(false);
+                                        }}
                                         className={`flex h-14 w-14 items-center justify-center rounded-2xl border-2 font-black text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
                                         {day}
                                     </button>
                                 ))}
                             </div>
+                            {showErrors && !state.dueDate && (
+                                <span className="text-red-500 text-xs font-bold mt-2 block">Selecione o melhor dia para vencimento</span>
+                            )}
                             <div className="mt-5 flex gap-3 rounded-2xl bg-amber-50 p-4 text-sm text-amber-800 border border-amber-100 font-medium">
                                 <AlertCircle className="h-5 w-5 shrink-0 mt-0.5" />
                                 <p>
@@ -320,9 +374,9 @@ export const StepData = () => {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div className={`grid grid-cols-1 gap-5 sm:grid-cols-2 p-2 rounded-2xl ${showErrors && !state.paymentMethod ? 'border-2 border-red-500' : ''}`}>
                             <div 
-                                onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}})} 
+                                onClick={() => {dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}}); if(showErrors) setShowErrors(false);}} 
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'credit_card' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
@@ -334,7 +388,7 @@ export const StepData = () => {
                                 <p className="text-sm text-slate-500 font-medium leading-relaxed">Pagamento recorrente, não ocupa o limite total do cartão.</p>
                             </div>
                             <div 
-                                onClick={() => dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}})} 
+                                onClick={() => {dispatch({type: 'SET_PAYMENT', payload: {method: 'boleto', date: state.dueDate}}); if(showErrors) setShowErrors(false);}} 
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'boleto' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}
                             >
                                 <div className="flex items-center justify-between mb-3">
@@ -346,6 +400,9 @@ export const StepData = () => {
                                 <p className="text-sm text-slate-500 font-medium leading-relaxed">Receba por email todo mês. Pague via PIX ou código de barras.</p>
                             </div>
                         </div>
+                        {showErrors && !state.paymentMethod && (
+                            <span className="text-red-500 text-xs font-bold mt-2 block">Selecione uma forma de pagamento</span>
+                        )}
                     </div>
                 </section>
 
@@ -353,7 +410,6 @@ export const StepData = () => {
                 <div className="pt-8 flex justify-end">
                     <button
                         onClick={handleNext}
-                        disabled={!isFormValid}
                         className="group flex items-center justify-center gap-3 rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0"
                     >
                         Revisar Pedido <ArrowRight className="h-6 w-6 transition-transform group-hover:translate-x-1" />

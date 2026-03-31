@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export const Footer = () => {
   return (
-    <footer className="border-t border-white/5 bg-[#050508] relative z-10 pt-20 pb-10">
+    <footer className="border-t border-text-primary/5 bg-bg-base relative z-10 pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-5 lg:px-8">
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
@@ -16,8 +16,8 @@ export const Footer = () => {
                 <Zap className="h-5 w-5 text-white fill-white" />
               </div>
               <div className="flex flex-col">
-                <span className="text-xl font-display font-black tracking-tight text-white leading-none">Brasil</span>
-                <span className="text-[10px] font-bold tracking-[0.2em] text-brand-light leading-none mt-1">DIGITAL</span>
+                <span className="text-xl font-display font-black tracking-tight text-text-primary leading-none">Brasil</span>
+                <span className="text-[10px] font-bold tracking-[0.2em] text-brand-primary leading-none mt-1">DIGITAL</span>
               </div>
             </Link>
             <p className="text-sm text-text-secondary leading-relaxed">
@@ -27,40 +27,37 @@ export const Footer = () => {
 
           {/* Col 2 */}
           <div className="flex flex-col items-start">
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Planos</h4>
+            <h4 className="text-text-primary font-bold mb-6 uppercase tracking-wider text-sm">Planos</h4>
             <ul className="space-y-4">
-              <li><a href="#planos" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Maceta Pro (500 Mega)</a></li>
-              <li><a href="#planos" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Maceta Plus (700 Mega)</a></li>
-              <li><a href="#planos" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Maceta Premium (1000 Mega)</a></li>
-              <li><a href="#promocoes" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Planos Promocionais</a></li>
+              <li><a href="#planos" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Maceta Pro (500 Mega)</a></li>
+              <li><a href="#planos" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Maceta Plus (700 Mega)</a></li>
+              <li><a href="#planos" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Maceta Premium (1000 Mega)</a></li>
+              <li><a href="#promocoes" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Planos Promocionais</a></li>
             </ul>
           </div>
 
           {/* Col 3 */}
           <div className="flex flex-col items-start">
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Suporte</h4>
+            <h4 className="text-text-primary font-bold mb-6 uppercase tracking-wider text-sm">Suporte</h4>
             <ul className="space-y-4">
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Central do Assinante</a></li>
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">2ª Via de Boleto</a></li>
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Teste de Velocidade</a></li>
-              <li><a href="#contato" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Fale Conosco</a></li>
+              <li><a href="https://pagamento.brasildigital.net.br/?_gl=1*2lreds*_gcl_au*MTM1MDg3MzIzNS4xNzY4ODM5Mjc0" target="_blank" rel="noopener noreferrer" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Central do Assinante</a></li>
+              <li><a href="https://pagamento.brasildigital.net.br/?_gl=1*yopdu5*_gcl_au*MTM1MDg3MzIzNS4xNzY4ODM5Mjc0" target="_blank" rel="noopener noreferrer" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">2ª Via de Boleto</a></li>
+              <li><a href="#contato" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Fale Conosco</a></li>
             </ul>
           </div>
 
           {/* Col 4 */}
           <div className="flex flex-col items-start">
-            <h4 className="text-white font-bold mb-6 uppercase tracking-wider text-sm">Institucional</h4>
+            <h4 className="text-text-primary font-bold mb-6 uppercase tracking-wider text-sm">Legal</h4>
             <ul className="space-y-4">
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Sobre Nós</a></li>
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Trabalhe Conosco</a></li>
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Política de Privacidade</a></li>
-              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-light transition-colors">Termos de Uso</a></li>
+              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Política de Privacidade</a></li>
+              <li><a href="#" className="text-sm text-text-secondary hover:text-brand-primary transition-colors">Termos de Uso</a></li>
             </ul>
           </div>
 
         </div>
 
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="pt-8 border-t border-text-primary/5 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-xs text-text-muted">
             &copy; {new Date().getFullYear()} Brasil Digital. Todos os direitos reservados.
           </p>

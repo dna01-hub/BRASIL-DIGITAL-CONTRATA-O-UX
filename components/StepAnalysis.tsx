@@ -7,12 +7,18 @@ export const StepAnalysis = () => {
   const { state, dispatch } = useOrder();
   const [doc, setDoc] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
 
   const isActive = state.step === 3;
   const isCompleted = state.step > 3;
   const isDisabled = state.step < 3;
 
   const handleAnalyze = async () => {
+      if (doc.length < 14) {
+          setShowErrors(true);
+          return;
+      }
+      setShowErrors(false);
       setLoading(true);
       try {
         const phone = state.customer?.celular || '';
@@ -72,7 +78,7 @@ export const StepAnalysis = () => {
             {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</button>}
         </div>
 
-        <div className={`transition-all duration-500 ease-in-out ${isActive ? 'max-h-[600px] opacity-100' : 'max-h-0 opacity-0'}`}>
+        <div className={`transition-all duration-500 ease-in-out ${isActive ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'}`}>
             <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
                 <div className="mb-8 flex items-center gap-4 rounded-2xl bg-indigo-50 p-5 text-indigo-900 border border-indigo-100">
                     <div className="bg-white p-2 rounded-xl shadow-sm">
@@ -86,16 +92,19 @@ export const StepAnalysis = () => {
                     <input 
                         type="text" 
                         value={doc}
-                        onChange={(e) => setDoc(formatDoc(e.target.value))}
-                        className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 text-lg tracking-wide"
+                        onChange={(e) => {setDoc(formatDoc(e.target.value)); if(showErrors) setShowErrors(false);}}
+                        className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 text-lg tracking-wide ${showErrors && doc.length < 14 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                         placeholder="000.000.000-00"
                     />
+                    {showErrors && doc.length < 14 && (
+                        <span className="text-red-500 text-xs font-bold mt-1 block">Falta preencher esse campo obrigatório</span>
+                    )}
                 </div>
 
                 <div className="mt-10 flex justify-end">
                     <button
                         onClick={handleAnalyze}
-                        disabled={loading || doc.length < 14}
+                        disabled={loading}
                         className="group relative flex items-center justify-center gap-3 overflow-hidden rounded-2xl bg-brand-600 px-10 py-5 text-lg font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
                     >
                         {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : 'Verificar Ofertas'}

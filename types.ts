@@ -71,6 +71,7 @@ export interface OrderFiles {
 
 export interface Scheduling {
   date: string;
+  period: string;
   timeId: string;
   timeLabel: string;
 }

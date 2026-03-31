@@ -1,6 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
+:root {
+  --color-bg-deep: #050508;
+  --color-bg-base: #0a0a12;
+  --color-bg-card: #0f1018;
+  
+  --color-text-primary: #EDEDEF;
+  --color-text-secondary: #8A8F98;
+  --color-text-muted: #5B6680;
+}
+
+html.light {
+  --color-bg-deep: #f8fafc;
+  --color-bg-base: #ffffff;
+  --color-bg-card: #f1f5f9;
+  
+  --color-text-primary: #0f172a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+}
+
 @theme {
   --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
   --font-display: "Outfit", ui-sans-serif, system-ui, sans-serif;
@@ -14,13 +34,13 @@
   
   --color-brand-badge: #f59e0b;
   
-  --color-bg-deep: #050508;
-  --color-bg-base: #0a0a12;
-  --color-bg-card: #0f1018;
+  --color-bg-deep: var(--color-bg-deep);
+  --color-bg-base: var(--color-bg-base);
+  --color-bg-card: var(--color-bg-card);
   
-  --color-text-primary: #EDEDEF;
-  --color-text-secondary: #8A8F98;
-  --color-text-muted: #5B6680;
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
 
   --color-brand-50: #f0fdf4;
   --color-brand-100: #dcfce7;

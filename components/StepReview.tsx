@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useOrder } from '../OrderContext';
 import { api } from '../services/api';
 import { Lock, FileText, CheckCircle2, MapPin, Calendar, CreditCard, User, Loader2, Wifi, Info, Phone, Mail } from 'lucide-react';
@@ -11,11 +11,28 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
   const { state } = useOrder();
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showErrors, setShowErrors] = useState(false);
+  const reviewRef = useRef<HTMLDivElement>(null);
 
   const isActive = state.step === 5;
+
+  useEffect(() => {
+      if (isActive && reviewRef.current) {
+          // Wait for previous step collapse animation to finish (500ms)
+          setTimeout(() => {
+              reviewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 550);
+      }
+  }, [isActive]);
+
   if (state.step < 5) return null;
 
   const handleSubmit = async () => {
+      if (!acceptedTerms) {
+          setShowErrors(true);
+          return;
+      }
+      setShowErrors(false);
       setIsSubmitting(true);
       try {
           await api.submitOrder({
@@ -47,7 +64,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
   };
 
   return (
-    <div className="mt-6 animate-slide-down">
+    <div ref={reviewRef} className="mt-6 animate-slide-down">
         <div className="rounded-3xl border-2 border-brand-500 bg-white shadow-2xl shadow-brand-900/10 overflow-hidden">
             
             <div className="bg-brand-900 p-6 md:p-8 text-white relative overflow-hidden">
@@ -75,14 +92,9 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                                     <dd className="font-black text-slate-900 text-lg">{state.customer?.nome}</dd>
                                 </div>
                                 
-                                <div>
+                                <div className="sm:col-span-2">
                                     <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CPF</dt>
                                     <dd className="font-bold text-slate-900">{state.customer?.cpfCnpj}</dd>
-                                </div>
-
-                                <div>
-                                    <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Data Nasc.</dt>
-                                    <dd className="font-bold text-slate-900">{formatDate(state.customer?.dataNascimento)}</dd>
                                 </div>
 
                                 <div className="sm:col-span-2 pt-4 border-t border-slate-200/60 mt-2">
@@ -201,7 +213,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
                                  <span className="text-slate-600 font-medium">Forma de Pagamento</span>
                                  <span className="font-black text-slate-900 bg-slate-100 px-3 py-1.5 rounded-lg">
-                                     {state.paymentMethod === 'credit_card' ? 'Cartão de Crédito' : 'Boleto Digital'}
+                                     {state.paymentMethod === 'credit_card' ? 'Cartão de Crédito' : state.paymentMethod === 'boleto' ? 'Boleto Digital' : 'Não selecionado'}
                                  </span>
                              </div>
                              <div className="flex justify-between items-center border-b border-slate-100 pb-3">
@@ -226,7 +238,7 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                                 </p>
                                 <p className="text-slate-600 font-bold flex items-center gap-2">
                                     <span className="h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
-                                    Período Comercial (08h às 18h)
+                                    {state.scheduling?.period === 'Manhã' ? 'Período da Manhã (08h às 12h)' : state.scheduling?.period === 'Tarde' ? 'Período da Tarde (13h às 18h)' : 'Período Comercial (08h às 18h)'}
                                 </p>
                              </div>
                              <p className="mt-6 text-sm text-slate-400 font-medium border-t border-slate-100 pt-4">
@@ -239,30 +251,37 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                 <div className="h-px bg-slate-200/60"></div>
 
                 {/* Terms */}
-                <div className="rounded-3xl border-2 border-slate-200 p-5 bg-slate-50 transition-colors hover:border-brand-300">
-                    <label className="flex items-start gap-4 cursor-pointer">
-                        <div className="relative flex items-center pt-1">
-                            <input 
-                                type="checkbox" 
-                                checked={acceptedTerms}
-                                onChange={(e) => setAcceptedTerms(e.target.checked)}
-                                className="peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 border-slate-300 bg-white transition-all checked:border-brand-600 checked:bg-brand-600"
-                            />
-                            <CheckCircle2 className="pointer-events-none absolute left-1/2 top-1/2 mt-0.5 h-4 w-4 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100" />
-                        </div>
-                        <span className="text-sm text-slate-600 font-medium select-none leading-relaxed">
-                            Li e concordo com o <a href="#" className="font-bold text-brand-600 hover:underline">Contrato de Prestação de Serviços</a>, 
-                            <a href="#" className="font-bold text-brand-600 hover:underline"> Termos de Uso</a> e 
-                            <a href="#" className="font-bold text-brand-600 hover:underline"> Política de Privacidade</a>. 
-                            Estou ciente da fidelidade de 12 meses e das condições da oferta.
+                <div className="space-y-3">
+                    <div className={`rounded-3xl border-2 p-5 transition-colors ${showErrors && !acceptedTerms ? 'border-red-500 bg-red-50' : 'border-slate-200 bg-slate-50 hover:border-brand-300'}`}>
+                        <label className="flex items-start gap-4 cursor-pointer">
+                            <div className="relative flex items-center pt-1">
+                                <input 
+                                    type="checkbox" 
+                                    checked={acceptedTerms}
+                                    onChange={(e) => {setAcceptedTerms(e.target.checked); if(showErrors) setShowErrors(false);}}
+                                    className={`peer h-6 w-6 cursor-pointer appearance-none rounded-lg border-2 bg-white transition-all checked:border-brand-600 checked:bg-brand-600 ${showErrors && !acceptedTerms ? 'border-red-500' : 'border-slate-300'}`}
+                                />
+                                <CheckCircle2 className="pointer-events-none absolute left-1/2 top-1/2 mt-0.5 h-4 w-4 -translate-x-1/2 -translate-y-1/2 text-white opacity-0 transition-opacity peer-checked:opacity-100" />
+                            </div>
+                            <span className="text-sm text-slate-600 font-medium select-none leading-relaxed">
+                                Li e concordo com o <a href="#" className="font-bold text-brand-600 hover:underline">Contrato de Prestação de Serviços</a>, 
+                                <a href="#" className="font-bold text-brand-600 hover:underline"> Termos de Uso</a> e 
+                                <a href="#" className="font-bold text-brand-600 hover:underline"> Política de Privacidade</a>. 
+                                Estou ciente da fidelidade de 12 meses e das condições da oferta.
+                            </span>
+                        </label>
+                    </div>
+                    {showErrors && !acceptedTerms && (
+                        <span className="text-red-500 text-sm font-bold block text-center">
+                            Você precisa aceitar os termos para continuar.
                         </span>
-                    </label>
+                    )}
                 </div>
 
                 {/* Final Button */}
                 <button
                     onClick={handleSubmit}
-                    disabled={!acceptedTerms || isSubmitting}
+                    disabled={isSubmitting}
                     className="group relative flex w-full items-center justify-center gap-3 rounded-2xl bg-brand-600 py-6 text-xl font-black tracking-wide text-white shadow-xl shadow-brand-500/30 transition-all hover:bg-brand-700 hover:-translate-y-1 disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none disabled:hover:translate-y-0"
                 >
                     {isSubmitting ? (

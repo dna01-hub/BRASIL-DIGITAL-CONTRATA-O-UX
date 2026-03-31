@@ -34,6 +34,7 @@ export const StepViability = () => {
   const [cepFound, setCepFound] = useState(false);
   const [showModal, setShowModal] = useState<'success' | 'error' | null>(null);
   const [errorMsg, setErrorMsg] = useState('');
+  const [showErrors, setShowErrors] = useState(false);
 
   const isActive = state.step === 1;
   const isCompleted = state.step > 1;
@@ -51,12 +52,13 @@ export const StepViability = () => {
       }
   }, [residenceType]);
 
-  const handleCepBlur = async () => {
-    if (cep.replace(/\D/g, '').length !== 8) return;
+  const handleCepBlur = async (currentCep?: string) => {
+    const cepToSearch = typeof currentCep === 'string' ? currentCep : cep;
+    if (cepToSearch.replace(/\D/g, '').length !== 8) return;
     
     setLoadingCep(true);
     try {
-        const data = await api.searchCep(cep);
+        const data = await api.searchCep(cepToSearch);
         if (data && !data.erro) {
             setAddressFields(prev => ({
                 ...prev,
@@ -66,6 +68,7 @@ export const StepViability = () => {
                 estado: data.uf
             }));
             setCepFound(true);
+            setShowErrors(false);
         } else {
             setErrorMsg('CEP não encontrado.');
         }
@@ -81,24 +84,26 @@ export const StepViability = () => {
     v = v.replace(/^(\d{2})(\d)/g,"($1) $2");
     v = v.replace(/(\d)(\d{4})$/,"$1-$2");
     setPhone(v);
+    if (showErrors && v.length >= 14) setShowErrors(false);
   };
 
   const checkViability = async () => {
     if (!phone || phone.length < 14) {
-        alert("Digite um telefone válido");
+        setShowErrors(true);
         return;
     }
 
     if (residenceType === 'condominio' && !selectedCondo) {
-        alert("Selecione um condomínio");
+        setShowErrors(true);
         return;
     }
 
-    if (residenceType !== 'condominio' && (!addressFields.logradouro || !addressFields.numero)) {
-        alert("Preencha o endereço completo");
+    if (residenceType !== 'condominio' && (!addressFields.logradouro || !addressFields.numero || cep.replace(/\D/g, '').length !== 8)) {
+        setShowErrors(true);
         return;
     }
 
+    setShowErrors(false);
     setLoading(true);
     setErrorMsg('');
 
@@ -204,7 +209,7 @@ export const StepViability = () => {
     <div className={`relative overflow-hidden rounded-3xl border bg-white transition-all duration-500 ${isActive ? 'ring-4 ring-brand-500/20 shadow-2xl border-brand-500' : 'border-slate-200 shadow-sm'}`}>
       <Header />
 
-      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isActive ? 'max-h-[1200px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isActive ? 'max-h-[2000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* 1. Phone Input (First) */}
@@ -217,9 +222,12 @@ export const StepViability = () => {
                         onChange={handlePhoneChange}
                         placeholder="(00) 00000-0000"
                         maxLength={15}
-                        className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 pl-12 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                        className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 pl-12 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && (!phone || phone.length < 14) ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                     />
                     <Phone className="absolute left-4 top-4 h-6 w-6 text-slate-400" />
+                    {showErrors && (!phone || phone.length < 14) && (
+                        <span className="text-red-500 text-xs font-bold mt-1 block absolute -bottom-5 left-0">Preencha um telefone válido</span>
+                    )}
                 </div>
             </div>
 
@@ -262,13 +270,16 @@ export const StepViability = () => {
                              <select 
                                 value={selectedCondo} 
                                 onChange={(e) => setSelectedCondo(e.target.value)}
-                                className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10"
+                                className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 ${showErrors && !selectedCondo ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                              >
                                  <option value="">Selecione...</option>
                                  {condos.map(c => <option key={c.id} value={c.id}>{c.nome} - {c.bairro}</option>)}
                                  {/* Mock Option if API empty */}
                                  {condos.length === 0 && <option value="999">Residencial Teste (Demo)</option>}
                              </select>
+                             {showErrors && !selectedCondo && (
+                                 <span className="text-red-500 text-xs font-bold mt-1 block">Selecione um condomínio</span>
+                             )}
                         </div>
                     )}
                     <div className="grid grid-cols-2 gap-5">
@@ -296,12 +307,18 @@ export const StepViability = () => {
                                         let v = e.target.value.replace(/\D/g,'').slice(0,8);
                                         if(v.length > 5) v = v.replace(/^(\d{5})(\d)/, '$1-$2');
                                         setCep(v);
+                                        if (v.replace(/\D/g, '').length === 8) {
+                                            handleCepBlur(v);
+                                        }
                                     }}
-                                    onBlur={handleCepBlur}
+                                    onBlur={() => handleCepBlur()}
                                     placeholder="00000-000"
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && cep.replace(/\D/g, '').length !== 8 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                                 />
                                 {loadingCep && <Loader2 className="absolute right-4 top-4 h-6 w-6 animate-spin text-brand-500"/>}
+                                {showErrors && cep.replace(/\D/g, '').length !== 8 && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">CEP inválido</span>
+                                )}
                             </div>
                          </div>
                          <div className="md:col-span-2">
@@ -322,16 +339,22 @@ export const StepViability = () => {
                                 <input 
                                     value={addressFields.logradouro}
                                     onChange={e => setAddressFields({...addressFields, logradouro: e.target.value})}
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && !addressFields.logradouro ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                                 />
+                                {showErrors && !addressFields.logradouro && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">Campo obrigatório</span>
+                                )}
                             </div>
                             <div className="md:col-span-1">
                                 <label className="mb-2 block text-sm font-bold text-slate-700">Número</label>
                                 <input 
                                     value={addressFields.numero}
                                     onChange={e => setAddressFields({...addressFields, numero: e.target.value})}
-                                    className="w-full rounded-2xl border-2 border-slate-200 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:border-brand-500 focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400"
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && !addressFields.numero ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`}
                                 />
+                                {showErrors && !addressFields.numero && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">Falta preencher esse campo obrigatório</span>
+                                )}
                             </div>
                             <div className="md:col-span-2">
                                 <label className="mb-2 block text-sm font-bold text-slate-700">Bairro</label>

@@ -11,7 +11,7 @@ export const CTAFinal = () => {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="relative rounded-[32px] bg-bg-card border border-white/5 p-10 sm:p-16 text-center overflow-hidden"
+          className="relative rounded-[32px] bg-bg-card border border-text-primary/5 p-10 sm:p-16 text-center overflow-hidden"
         >
           {/* Gradient Top Border */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-primary via-brand-light to-brand-primary opacity-50"></div>
@@ -20,7 +20,7 @@ export const CTAFinal = () => {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-brand-primary/20 rounded-full blur-[80px] pointer-events-none"></div>
 
           <div className="relative z-10 max-w-3xl mx-auto">
-            <h2 className="text-4xl md:text-5xl font-display font-black tracking-tight text-white mb-6 leading-tight">
+            <h2 className="text-4xl md:text-5xl font-display font-black tracking-tight text-text-primary mb-6 leading-tight">
               Pronto pra ter internet que funciona de verdade?
             </h2>
             <p className="text-lg sm:text-xl text-text-secondary mb-12">
