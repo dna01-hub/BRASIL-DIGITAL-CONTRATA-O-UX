@@ -96,7 +96,7 @@ export const StepPlans = () => {
       </div>
 
       {/* Content */}
-      <div className={`transition-all duration-700 ease-in-out ${isActive ? 'max-h-[5000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+      <div className={`transition-all duration-700 ease-in-out overflow-hidden ${isActive ? 'max-h-[15000px] opacity-100' : 'max-h-0 opacity-0'}`}>
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* Plan Cards */}
