@@ -115,27 +115,27 @@ export const StepPlans = () => {
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* Plan Cards */}
-            <div className="relative group/carousel">
+            <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4">
                 <button 
                     onClick={(e) => { e.stopPropagation(); scrollCarousel(plansCarouselRef, 'left'); }}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                 >
                     <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
                 <button 
                     onClick={(e) => { e.stopPropagation(); scrollCarousel(plansCarouselRef, 'right'); }}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                 >
                     <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
-                <div ref={plansCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-4 hide-scrollbar w-full scroll-smooth">
+                <div ref={plansCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-8 pt-4 px-2 hide-scrollbar w-full scroll-smooth">
                 {plans.map((plan) => {
                     const selected = state.selectedPlan?.id === plan.id;
                     return (
                     <div 
                         key={plan.id}
                         onClick={() => handleSelectPlan(plan)}
-                        className={`w-full shrink-0 md:w-[calc(50%-12px)] snap-start group relative flex h-full flex-col cursor-pointer overflow-hidden rounded-3xl border-2 bg-white p-6 sm:p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
+                        className={`w-full shrink-0 md:w-[calc(50%-12px)] snap-start group relative flex h-full flex-col cursor-pointer rounded-3xl border-2 bg-white p-6 sm:p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-[0_8px_30px_rgba(0,123,255,0.2)] scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
                     >
                     {plan.bestValue && (
                         <div className="absolute right-0 top-0 rounded-bl-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1.5 text-xs font-black tracking-wider text-white shadow-sm">
@@ -194,20 +194,20 @@ export const StepPlans = () => {
                                 Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativo{state.selectedPlan.appsLimit > 1 ? 's' : ''} Playhub</strong>. Selecione o{state.selectedPlan.appsLimit > 1 ? 's' : ''} que você mais gosta:
                             </p>
 
-                            <div className="relative group/carousel">
+                            <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4">
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); scrollCarousel(appsCarouselRef, 'left'); }}
-                                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                                 >
                                     <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </button>
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); scrollCarousel(appsCarouselRef, 'right'); }}
-                                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                                 >
                                     <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </button>
-                                <div ref={appsCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-5 pb-4 hide-scrollbar w-full scroll-smooth">
+                                <div ref={appsCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-5 pb-8 pt-4 px-2 hide-scrollbar w-full scroll-smooth">
                                     {availableApps.map(app => {
                                         const isSelected = state.selectedApps.some(a => a.id === app.id);
                                         const limitReached = state.selectedApps.length >= (state.selectedPlan?.appsLimit || 0);
@@ -224,7 +224,7 @@ export const StepPlans = () => {
                                                 }}
                                                 className={`w-[calc(50%-8px)] shrink-0 md:w-[calc(25%-12px)] lg:w-[calc(16.666%-16px)] snap-start relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
                                                     isSelected 
-                                                    ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105' 
+                                                    ? 'border-indigo-500 bg-white shadow-[0_8px_30px_rgba(99,102,241,0.2)] scale-105' 
                                                     : disabled 
                                                         ? 'cursor-not-allowed border-slate-200 bg-slate-100 opacity-50' 
                                                         : 'cursor-pointer border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md hover:-translate-y-1'
@@ -264,27 +264,27 @@ export const StepPlans = () => {
                             <span className="px-4 py-1.5 rounded-full bg-violet-200 text-violet-800 text-xs font-black uppercase tracking-wider self-start md:self-auto">Recomendado</span>
                          </div>
 
-                         <div className="relative group/carousel">
+                         <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4">
                             <button 
                                 onClick={(e) => { e.stopPropagation(); scrollCarousel(servicesCarouselRef, 'left'); }}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                             >
                                 <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                             </button>
                             <button 
                                 onClick={(e) => { e.stopPropagation(); scrollCarousel(servicesCarouselRef, 'right'); }}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                             >
                                 <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                             </button>
-                            <div ref={servicesCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-5 pb-4 hide-scrollbar w-full scroll-smooth">
+                            <div ref={servicesCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-5 pb-8 pt-4 px-2 hide-scrollbar w-full scroll-smooth">
                                 {services.map(svc => {
                                     const isAdded = state.additionalServices.some(s => s.id === svc.id);
                                     return (
                                         <div 
                                             key={svc.id}
                                             onClick={() => dispatch({type: 'TOGGLE_SERVICE', payload: svc})}
-                                            className={`w-full shrink-0 md:w-[calc(50%-10px)] snap-start cursor-pointer rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-lg shadow-violet-500/10 scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
+                                            className={`w-full shrink-0 md:w-[calc(50%-10px)] snap-start cursor-pointer rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-[0_8px_30px_rgba(139,92,246,0.2)] scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
                                         >
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="p-3 rounded-xl bg-violet-100">
