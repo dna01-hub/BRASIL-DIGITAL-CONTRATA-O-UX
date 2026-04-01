@@ -185,23 +185,23 @@ export const StepViability = () => {
   // Header Component
   const Header = () => (
       <div 
-        className={`flex cursor-pointer items-center justify-between p-6 md:p-8 ${!isActive && isCompleted ? 'hover:bg-slate-50' : ''}`}
+        className={`flex cursor-pointer items-center justify-between p-4 sm:p-6 md:p-8 ${!isActive && isCompleted ? 'hover:bg-slate-50' : ''}`}
         onClick={() => isCompleted && dispatch({type: 'SET_STEP', payload: 1})}
       >
-        <div className="flex items-center gap-5">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
-            {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : '1'}
+        <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+          <div className={`flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
+            {isCompleted ? <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" /> : '1'}
           </div>
-          <div>
-             <h3 className={`text-xl font-black tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Verificar Disponibilidade</h3>
+          <div className="min-w-0">
+             <h3 className={`text-lg sm:text-xl font-black tracking-tight truncate ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Verificar Disponibilidade</h3>
              {isCompleted && state.address && (
-                 <p className="text-sm font-medium text-slate-500 mt-1">
+                 <p className="text-sm font-medium text-slate-500 mt-1 truncate">
                      {state.address.tipo === 'condominio' ? 'Condomínio' : state.address.logradouro}, {state.address.numero}
                  </p>
              )}
           </div>
         </div>
-        {isCompleted && <span className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</span>}
+        {isCompleted && <span className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors ml-2 shrink-0">Alterar</span>}
       </div>
   );
 
@@ -234,27 +234,27 @@ export const StepViability = () => {
             {/* 2. Residence Type Toggles */}
             <div className="mb-8">
                 <label className="mb-3 block text-sm font-bold text-slate-700">Onde será a instalação?</label>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <button 
                         onClick={() => setResidenceType('casa')}
-                        className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all duration-300 ${residenceType === 'casa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
+                        className={`flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-4 sm:gap-3 rounded-2xl border-2 p-4 sm:p-5 transition-all duration-300 ${residenceType === 'casa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
                     >
-                        <Home className="h-8 w-8" />
-                        <span className="text-sm font-bold">Casa</span>
+                        <Home className="h-6 w-6 sm:h-8 sm:w-8 shrink-0" />
+                        <span className="text-sm font-bold text-left sm:text-center leading-tight">Casa</span>
                     </button>
                     <button 
                         onClick={() => setResidenceType('condominio')}
-                        className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all duration-300 ${residenceType === 'condominio' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
+                        className={`flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-4 sm:gap-3 rounded-2xl border-2 p-4 sm:p-5 transition-all duration-300 ${residenceType === 'condominio' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
                     >
-                        <Building2 className="h-8 w-8" />
-                        <span className="text-sm font-bold">Prédio/Condo</span>
+                        <Building2 className="h-6 w-6 sm:h-8 sm:w-8 shrink-0" />
+                        <span className="text-sm font-bold text-left sm:text-center leading-tight">Residencial/Condomínio</span>
                     </button>
                     <button 
                         onClick={() => setResidenceType('empresa')}
-                        className={`flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-5 transition-all duration-300 ${residenceType === 'empresa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
+                        className={`flex flex-row sm:flex-col items-center justify-start sm:justify-center gap-4 sm:gap-3 rounded-2xl border-2 p-4 sm:p-5 transition-all duration-300 ${residenceType === 'empresa' ? 'border-brand-500 bg-brand-50 text-brand-700 shadow-md scale-[1.02]' : 'border-slate-200 bg-white text-slate-500 hover:border-slate-300 hover:bg-slate-50'}`}
                     >
-                        <Briefcase className="h-8 w-8" />
-                        <span className="text-sm font-bold">Empresa</span>
+                        <Briefcase className="h-6 w-6 sm:h-8 sm:w-8 shrink-0" />
+                        <span className="text-sm font-bold text-left sm:text-center leading-tight">Empresa</span>
                     </button>
                 </div>
             </div>

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useOrder } from '../OrderContext';
-import { Check, Star, CheckCircle2, Plus, Wifi, Zap, Shield } from 'lucide-react';
+import { Check, Star, CheckCircle2, Plus, Wifi, Zap, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Plan, AppOption, AdditionalService } from '../types';
 
 const plans: Plan[] = [
@@ -15,7 +15,7 @@ const plans: Plan[] = [
   { id: 7, name: 'PREMIUM GLOBOPLAY', speed: 1000, price: 179.90, originalPrice: 219.90, features: ['Kaspersky', 'Ubook Go', 'Globoplay (com anúncios)'], appsLimit: 0 },
 ];
 
-const availableApps: AppOption[] = [
+export const availableApps: AppOption[] = [
     { id: 'looke', name: 'Looke', logo: 'https://ui-avatars.com/api/?name=Looke&background=random' },
     { id: 'leitura360', name: 'Leitura 360', logo: 'https://ui-avatars.com/api/?name=Leitura+360&background=random' },
     { id: 'indie', name: 'Indie', logo: 'https://ui-avatars.com/api/?name=Indie&background=random' },
@@ -32,7 +32,7 @@ const availableApps: AppOption[] = [
     { id: 'zen', name: 'Zen', logo: 'https://ui-avatars.com/api/?name=Zen&background=random' },
 ];
 
-const services: AdditionalService[] = [
+export const services: AdditionalService[] = [
     { id: 'disney', name: 'Disney+', price: 29.90, description: 'SVA Premium' },
     { id: 'globoplay', name: 'Globoplay', price: 22.90, description: 'SVA Premium' },
     { id: 'telecine', name: 'Telecine', price: 14.90, description: 'SVA Premium' },
@@ -55,13 +55,28 @@ const services: AdditionalService[] = [
 export const StepPlans = () => {
   const { state, dispatch } = useOrder();
   const [showErrors, setShowErrors] = useState(false);
+  const optionsRef = useRef<HTMLDivElement>(null);
+  const plansCarouselRef = useRef<HTMLDivElement>(null);
+  const servicesCarouselRef = useRef<HTMLDivElement>(null);
+  const appsCarouselRef = useRef<HTMLDivElement>(null);
   
+  const scrollCarousel = (ref: React.RefObject<HTMLDivElement>, direction: 'left' | 'right') => {
+      if (ref.current) {
+          const scrollAmount = ref.current.clientWidth;
+          ref.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+      }
+  };
+
   const isActive = state.step === 2;
   const isCompleted = state.step > 2;
   const isDisabled = state.step < 2;
 
   const handleSelectPlan = (plan: Plan) => {
       dispatch({ type: 'SET_PLAN', payload: plan });
+      // Auto-scroll to options after a short delay to allow render
+      setTimeout(() => {
+          optionsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 100);
   };
 
   const handleContinue = () => {
@@ -78,21 +93,21 @@ export const StepPlans = () => {
       
       {/* Header */}
       <div 
-        className={`flex items-center justify-between p-6 md:p-8 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50' : 'opacity-50 cursor-not-allowed'}`}
+        className={`flex items-center justify-between p-4 sm:p-6 md:p-8 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50' : 'opacity-50 cursor-not-allowed'}`}
         onClick={() => isCompleted && dispatch({type: 'SET_STEP', payload: 2})}
       >
-        <div className="flex items-center gap-5">
-          <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
-            {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : '2'}
+        <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+          <div className={`flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
+            {isCompleted ? <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" /> : '2'}
           </div>
-          <div>
-             <h3 className={`text-xl font-black tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Escolha seu Plano</h3>
+          <div className="min-w-0">
+             <h3 className={`text-lg sm:text-xl font-black tracking-tight truncate ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Escolha seu Plano</h3>
              {isCompleted && state.selectedPlan && (
-                 <p className="text-sm font-medium text-slate-500 mt-1">{state.selectedPlan.name} - {state.selectedPlan.speed} MEGA por R$ {state.selectedPlan.price.toFixed(2)}</p>
+                 <p className="text-sm font-medium text-slate-500 mt-1 truncate">{state.selectedPlan.name} - {state.selectedPlan.speed} MEGA por R$ {state.selectedPlan.price.toFixed(2)}</p>
              )}
           </div>
         </div>
-        {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</button>}
+        {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors ml-2 shrink-0">Alterar</button>}
       </div>
 
       {/* Content */}
@@ -100,15 +115,28 @@ export const StepPlans = () => {
         <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8">
             
             {/* Plan Cards */}
-            <div className="grid gap-6 lg:grid-cols-2">
-            {plans.map((plan) => {
-                const selected = state.selectedPlan?.id === plan.id;
-                return (
-                <div 
-                    key={plan.id}
-                    onClick={() => handleSelectPlan(plan)}
-                    className={`group relative flex h-full flex-col cursor-pointer overflow-hidden rounded-3xl border-2 bg-white p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
+            <div className="relative group/carousel">
+                <button 
+                    onClick={(e) => { e.stopPropagation(); scrollCarousel(plansCarouselRef, 'left'); }}
+                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                 >
+                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                </button>
+                <button 
+                    onClick={(e) => { e.stopPropagation(); scrollCarousel(plansCarouselRef, 'right'); }}
+                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                >
+                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                </button>
+                <div ref={plansCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-6 pb-4 hide-scrollbar w-full scroll-smooth">
+                {plans.map((plan) => {
+                    const selected = state.selectedPlan?.id === plan.id;
+                    return (
+                    <div 
+                        key={plan.id}
+                        onClick={() => handleSelectPlan(plan)}
+                        className={`w-full shrink-0 md:w-[calc(50%-12px)] snap-start group relative flex h-full flex-col cursor-pointer overflow-hidden rounded-3xl border-2 bg-white p-6 sm:p-8 transition-all duration-300 hover:shadow-xl ${selected ? 'border-brand-500 shadow-brand-500/20 scale-[1.02]' : 'border-slate-200 hover:border-brand-300 hover:-translate-y-1'}`}
+                    >
                     {plan.bestValue && (
                         <div className="absolute right-0 top-0 rounded-bl-2xl bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1.5 text-xs font-black tracking-wider text-white shadow-sm">
                             MAIS VENDIDO
@@ -151,11 +179,12 @@ export const StepPlans = () => {
                 </div>
                 );
             })}
+                </div>
             </div>
 
             {/* Apps & Services Selection - Shows below when plan selected */}
             {state.selectedPlan && (
-                <div className="mt-10 animate-fade-in space-y-8">
+                <div ref={optionsRef} className="mt-10 animate-fade-in space-y-8">
                     
                     {/* APPS */}
                     {state.selectedPlan.appsLimit > 0 && (
@@ -165,39 +194,53 @@ export const StepPlans = () => {
                                 Seu plano inclui <strong className="text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">{state.selectedPlan.appsLimit} aplicativo{state.selectedPlan.appsLimit > 1 ? 's' : ''} Playhub</strong>. Selecione o{state.selectedPlan.appsLimit > 1 ? 's' : ''} que você mais gosta:
                             </p>
 
-                            <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-6">
-                                {availableApps.map(app => {
-                                    const isSelected = state.selectedApps.some(a => a.id === app.id);
-                                    const limitReached = state.selectedApps.length >= (state.selectedPlan?.appsLimit || 0);
-                                    const disabled = !isSelected && limitReached;
+                            <div className="relative group/carousel">
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); scrollCarousel(appsCarouselRef, 'left'); }}
+                                    className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                >
+                                    <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                                </button>
+                                <button 
+                                    onClick={(e) => { e.stopPropagation(); scrollCarousel(appsCarouselRef, 'right'); }}
+                                    className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                >
+                                    <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                                </button>
+                                <div ref={appsCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-5 pb-4 hide-scrollbar w-full scroll-smooth">
+                                    {availableApps.map(app => {
+                                        const isSelected = state.selectedApps.some(a => a.id === app.id);
+                                        const limitReached = state.selectedApps.length >= (state.selectedPlan?.appsLimit || 0);
+                                        const disabled = !isSelected && limitReached;
 
-                                    return (
-                                        <button
-                                            key={app.id}
-                                            onClick={() => {
-                                                if (!disabled) {
-                                                    dispatch({type: 'TOGGLE_APP', payload: app});
-                                                    if (showErrors) setShowErrors(false);
-                                                }
-                                            }}
-                                            className={`relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
-                                                isSelected 
-                                                ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105' 
-                                                : disabled 
-                                                    ? 'cursor-not-allowed border-slate-200 bg-slate-100 opacity-50' 
-                                                    : 'cursor-pointer border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md hover:-translate-y-1'
-                                            }`}
-                                        >
-                                            {isSelected && <div className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-indigo-500 flex items-center justify-center shadow-sm"><Check className="w-4 h-4 text-white"/></div>}
-                                            <div className="h-14 w-14 rounded-full overflow-hidden bg-slate-100 shadow-sm">
-                                                <img src={app.logo} alt={app.name} className="h-full w-full object-cover" onError={(e) => {
-                                                    (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${app.name}&background=random`
-                                                }} />
-                                            </div>
-                                            <span className="text-sm font-bold text-slate-700 text-center leading-tight">{app.name}</span>
-                                        </button>
-                                    );
-                                })}
+                                        return (
+                                            <button
+                                                key={app.id}
+                                                onClick={() => {
+                                                    if (!disabled) {
+                                                        dispatch({type: 'TOGGLE_APP', payload: app});
+                                                        if (showErrors) setShowErrors(false);
+                                                    }
+                                                }}
+                                                className={`w-[calc(50%-8px)] shrink-0 md:w-[calc(25%-12px)] lg:w-[calc(16.666%-16px)] snap-start relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
+                                                    isSelected 
+                                                    ? 'border-indigo-500 bg-white shadow-lg shadow-indigo-500/20 scale-105' 
+                                                    : disabled 
+                                                        ? 'cursor-not-allowed border-slate-200 bg-slate-100 opacity-50' 
+                                                        : 'cursor-pointer border-slate-200 bg-white hover:border-indigo-300 hover:shadow-md hover:-translate-y-1'
+                                                }`}
+                                            >
+                                                {isSelected && <div className="absolute -right-2 -top-2 h-6 w-6 rounded-full bg-indigo-500 flex items-center justify-center shadow-sm"><Check className="w-4 h-4 text-white"/></div>}
+                                                <div className="h-14 w-14 rounded-full overflow-hidden bg-slate-100 shadow-sm">
+                                                    <img src={app.logo} alt={app.name} className="h-full w-full object-cover" onError={(e) => {
+                                                        (e.target as HTMLImageElement).src = `https://ui-avatars.com/api/?name=${app.name}&background=random`
+                                                    }} />
+                                                </div>
+                                                <span className="text-sm font-bold text-slate-700 text-center leading-tight">{app.name}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
                             
                             {showErrors && state.selectedApps.length !== state.selectedPlan.appsLimit && (
@@ -221,15 +264,28 @@ export const StepPlans = () => {
                             <span className="px-4 py-1.5 rounded-full bg-violet-200 text-violet-800 text-xs font-black uppercase tracking-wider self-start md:self-auto">Recomendado</span>
                          </div>
 
-                         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-                            {services.map(svc => {
-                                const isAdded = state.additionalServices.some(s => s.id === svc.id);
-                                return (
-                                    <div 
-                                        key={svc.id}
-                                        onClick={() => dispatch({type: 'TOGGLE_SERVICE', payload: svc})}
-                                        className={`cursor-pointer rounded-2xl border-2 p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-lg shadow-violet-500/10 scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
-                                    >
+                         <div className="relative group/carousel">
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); scrollCarousel(servicesCarouselRef, 'left'); }}
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 sm:-translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                            >
+                                <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+                            </button>
+                            <button 
+                                onClick={(e) => { e.stopPropagation(); scrollCarousel(servicesCarouselRef, 'right'); }}
+                                className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 sm:translate-x-4 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                            >
+                                <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+                            </button>
+                            <div ref={servicesCarouselRef} className="flex overflow-x-auto snap-x snap-mandatory gap-4 sm:gap-5 pb-4 hide-scrollbar w-full scroll-smooth">
+                                {services.map(svc => {
+                                    const isAdded = state.additionalServices.some(s => s.id === svc.id);
+                                    return (
+                                        <div 
+                                            key={svc.id}
+                                            onClick={() => dispatch({type: 'TOGGLE_SERVICE', payload: svc})}
+                                            className={`w-full shrink-0 md:w-[calc(50%-10px)] snap-start cursor-pointer rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-lg shadow-violet-500/10 scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
+                                        >
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="p-3 rounded-xl bg-violet-100">
                                                 {svc.id === 'mesh' ? <Wifi className="h-6 w-6 text-violet-600"/> : svc.description.includes('SVA') ? <Star className="h-6 w-6 text-violet-600"/> : <Shield className="h-6 w-6 text-violet-600"/>}
@@ -244,6 +300,7 @@ export const StepPlans = () => {
                                     </div>
                                 )
                             })}
+                            </div>
                          </div>
                     </div>
 

@@ -3,12 +3,7 @@ import { useOrder } from '../OrderContext';
 import { ShoppingCart, Check, ShieldCheck, Wifi, MapPin, ChevronUp, ChevronDown, Zap, Plus, X } from 'lucide-react';
 import { AdditionalService } from '../types';
 
-// Duplicated from StepPlans to ensure availability in Modal. In a real app, this would be in a constants file.
-const SERVICES_OPTIONS: AdditionalService[] = [
-    { id: 'mesh', name: 'Ponto Ultra Mesh', price: 19.90, description: 'Amplie o sinal do Wi-Fi para a casa toda.' },
-    { id: 'ipfixo', name: 'IP Fixo Gamer', price: 29.90, description: 'Menor latência e estabilidade para jogos.' },
-    { id: 'suporte', name: 'Suporte Premium', price: 9.90, description: 'Atendimento prioritário 24h.' },
-];
+import { services as SERVICES_OPTIONS } from './StepPlans';
 
 export const Sidebar = () => {
   const { state, dispatch } = useOrder();

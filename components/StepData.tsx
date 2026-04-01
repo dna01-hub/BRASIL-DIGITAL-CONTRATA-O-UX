@@ -8,6 +8,9 @@ export const StepData = () => {
       nome: state.customer?.nome || '',
       email: state.customer?.email || '',
       telefoneSecundario: state.customer?.telefone || '',
+      razaoSocial: state.customer?.razaoSocial || '',
+      nomeResponsavel: state.customer?.nomeResponsavel || '',
+      cpfResponsavel: state.customer?.cpfResponsavel || '',
   });
   const [date, setDate] = useState(state.scheduling?.date || '');
   const [selectedTime, setSelectedTime] = useState<string>(state.scheduling?.period || ''); // Local state for time selection styling
@@ -151,55 +154,115 @@ export const StepData = () => {
       return false;
   };
 
-  const isFormValid = 
-      formData.nome.trim().length > 3 && 
-      formData.email.includes('@') && 
-      date && 
-      selectedTime &&
-      state.paymentMethod &&
-      state.dueDate;
+  const formatCpf = (val: string) => {
+    return val.replace(/\D/g, '')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})/, '$1-$2')
+      .replace(/(-\d{2})\d+?$/, '$1');
+  };
+
+  const isEmpresa = state.address?.tipo === 'empresa';
+
+  const isFormValid = isEmpresa 
+      ? formData.razaoSocial.trim().length > 3 &&
+        formData.nomeResponsavel.trim().length > 3 &&
+        formData.cpfResponsavel.length >= 14 &&
+        formData.email.includes('@') && 
+        date && 
+        selectedTime &&
+        state.paymentMethod &&
+        state.dueDate
+      : formData.nome.trim().length > 3 && 
+        formData.email.includes('@') && 
+        date && 
+        selectedTime &&
+        state.paymentMethod &&
+        state.dueDate;
 
   return (
     <div className={`relative overflow-hidden rounded-3xl border bg-white transition-all duration-500 ${isActive ? 'ring-4 ring-brand-500/20 shadow-2xl border-brand-500 mt-6' : 'border-slate-200 shadow-sm mt-4'}`}>
          
          <div 
-            className={`flex items-center justify-between p-6 md:p-8 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50' : 'opacity-50 cursor-not-allowed'}`}
+            className={`flex items-center justify-between p-4 sm:p-6 md:p-8 ${!isDisabled ? 'cursor-pointer hover:bg-slate-50' : 'opacity-50 cursor-not-allowed'}`}
             onClick={() => isCompleted && dispatch({type: 'SET_STEP', payload: 4})}
          >
-            <div className="flex items-center gap-5">
-                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
-                    {isCompleted ? <CheckCircle2 className="h-6 w-6" /> : '4'}
+            <div className="flex items-center gap-3 sm:gap-5 min-w-0">
+                <div className={`flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl text-base font-black transition-all duration-300 ${isCompleted ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/30' : isActive ? 'bg-brand-600 text-white shadow-lg shadow-brand-500/30' : 'bg-slate-100 text-slate-400'}`}>
+                    {isCompleted ? <CheckCircle2 className="h-5 w-5 sm:h-6 sm:w-6" /> : '4'}
                 </div>
-                <div>
-                    <h3 className={`text-xl font-black tracking-tight ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Dados para Contrato</h3>
-                    {isCompleted && <p className="text-sm text-emerald-600 font-bold mt-1">Todos os dados preenchidos</p>}
+                <div className="min-w-0">
+                    <h3 className={`text-lg sm:text-xl font-black tracking-tight truncate ${isActive ? 'text-slate-900' : 'text-slate-600'}`}>Dados para Contrato</h3>
+                    {isCompleted && <p className="text-sm text-emerald-600 font-bold mt-1 truncate">Todos os dados preenchidos</p>}
                 </div>
             </div>
-            {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors">Alterar</button>}
+            {isCompleted && <button className="text-sm font-bold text-brand-600 hover:text-brand-700 transition-colors ml-2 shrink-0">Alterar</button>}
          </div>
 
-         <div className={`transition-all duration-500 ease-in-out ${isActive ? 'max-h-[4000px] opacity-100' : 'max-h-0 opacity-0'}`}>
+         <div className={`transition-all duration-500 ease-in-out overflow-hidden ${isActive ? 'max-h-[4000px] opacity-100' : 'max-h-0 opacity-0'}`}>
             <div className="border-t border-slate-100 bg-slate-50/50 p-6 md:p-8 space-y-10">
                 
                 {/* Personal Data */}
                 <section>
                     <h4 className="mb-5 flex items-center gap-3 text-sm font-black uppercase text-slate-400 tracking-widest">
-                        <User className="h-5 w-5 text-slate-300" /> Dados Pessoais
+                        <User className="h-5 w-5 text-slate-300" /> {isEmpresa ? 'Dados da Empresa' : 'Dados Pessoais'}
                     </h4>
-                    <div className="grid gap-5 md:grid-cols-1">
-                        <div>
-                            <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
-                            <input 
-                                type="text" 
-                                value={formData.nome} 
-                                onChange={e => {setFormData({...formData, nome: e.target.value}); if(showErrors) setShowErrors(false);}} 
-                                className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && formData.nome.trim().length <= 3 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
-                            />
-                            {showErrors && formData.nome.trim().length <= 3 && (
-                                <span className="text-red-500 text-xs font-bold mt-1 block">Preencha seu nome completo</span>
-                            )}
+                    {isEmpresa ? (
+                        <div className="grid gap-5 md:grid-cols-2">
+                            <div className="md:col-span-2">
+                                <label className="mb-2 block text-sm font-bold text-slate-700">Razão Social</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.razaoSocial} 
+                                    onChange={e => {setFormData({...formData, razaoSocial: e.target.value}); if(showErrors) setShowErrors(false);}} 
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && formData.razaoSocial.trim().length <= 3 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
+                                />
+                                {showErrors && formData.razaoSocial.trim().length <= 3 && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">Preencha a razão social</span>
+                                )}
+                            </div>
+                            <div>
+                                <label className="mb-2 block text-sm font-bold text-slate-700">Nome do Responsável</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.nomeResponsavel} 
+                                    onChange={e => {setFormData({...formData, nomeResponsavel: e.target.value}); if(showErrors) setShowErrors(false);}} 
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && formData.nomeResponsavel.trim().length <= 3 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
+                                />
+                                {showErrors && formData.nomeResponsavel.trim().length <= 3 && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">Preencha o nome do responsável</span>
+                                )}
+                            </div>
+                            <div>
+                                <label className="mb-2 block text-sm font-bold text-slate-700">CPF do Responsável</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.cpfResponsavel} 
+                                    onChange={e => {setFormData({...formData, cpfResponsavel: formatCpf(e.target.value)}); if(showErrors) setShowErrors(false);}} 
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && formData.cpfResponsavel.length < 14 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
+                                    placeholder="000.000.000-00"
+                                />
+                                {showErrors && formData.cpfResponsavel.length < 14 && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">Preencha um CPF válido</span>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="grid gap-5 md:grid-cols-1">
+                            <div>
+                                <label className="mb-2 block text-sm font-bold text-slate-700">Nome Completo</label>
+                                <input 
+                                    type="text" 
+                                    value={formData.nome} 
+                                    onChange={e => {setFormData({...formData, nome: e.target.value}); if(showErrors) setShowErrors(false);}} 
+                                    className={`w-full rounded-2xl border-2 bg-white text-slate-900 p-4 font-medium outline-none transition-all focus:ring-4 focus:ring-brand-500/10 placeholder-slate-400 ${showErrors && formData.nome.trim().length <= 3 ? 'border-red-500' : 'border-slate-200 focus:border-brand-500'}`} 
+                                />
+                                {showErrors && formData.nome.trim().length <= 3 && (
+                                    <span className="text-red-500 text-xs font-bold mt-1 block">Preencha seu nome completo</span>
+                                )}
+                            </div>
+                        </div>
+                    )}
                 </section>
 
                  <div className="h-px bg-slate-200/60"></div>

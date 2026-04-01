@@ -16,34 +16,34 @@ const Checkout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24 font-sans text-slate-900 selection:bg-brand-500 selection:text-white">
+    <div className="min-h-screen bg-slate-50 pb-24 font-sans text-slate-900 selection:bg-brand-500 selection:text-white overflow-x-hidden">
       
       {/* Header */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-brand-900 shadow-xl backdrop-blur-md">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
              {/* Logo Container */}
-             <div className="flex items-center gap-2">
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-lg">
+             <div className="flex items-center gap-2 min-w-0">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-400 to-brand-600 shadow-lg">
                   <Wifi className="h-6 w-6 text-white" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xl font-black tracking-tight text-white leading-none">Brasil</span>
-                  <span className="text-[10px] font-bold tracking-[0.2em] text-brand-400 leading-none mt-1">DIGITAL</span>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-xl font-black tracking-tight text-white leading-none truncate">Brasil</span>
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-brand-400 leading-none mt-1 truncate">DIGITAL</span>
                 </div>
              </div>
           </div>
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6 shrink-0 ml-4">
              <div className="hidden md:flex items-center gap-2 text-sm font-medium text-slate-300">
                 <ShieldCheck className="h-4 w-4 text-brand-400" />
                 <span>Ambiente Seguro</span>
              </div>
-             <div className="flex items-center gap-2 text-sm font-medium text-white/90 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
-                <span className="relative flex h-2 w-2">
+             <div className="flex items-center gap-2 text-xs sm:text-sm font-medium text-white/90 bg-white/10 px-3 py-1.5 rounded-full border border-white/10">
+                <span className="relative flex h-2 w-2 shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
                 </span>
-                Vendas Online
+                <span className="truncate">Vendas Online</span>
              </div>
           </div>
         </div>
@@ -63,7 +63,7 @@ const Checkout = () => {
         <div className="grid gap-8 lg:grid-cols-12 xl:gap-12">
           
           {/* Form Column - Accordion Flow */}
-          <div className="lg:col-span-8 xl:col-span-8 space-y-6">
+          <div className="lg:col-span-8 xl:col-span-8 space-y-6 min-w-0">
             <StepViability />
             <StepPlans />
             <StepAnalysis />

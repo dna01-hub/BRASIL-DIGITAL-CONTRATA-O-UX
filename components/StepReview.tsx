@@ -69,11 +69,11 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
             
             <div className="bg-brand-900 p-6 md:p-8 text-white relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-brand-500/20 to-transparent"></div>
-                <div className="relative z-10">
-                    <h3 className="flex items-center gap-3 text-2xl font-black tracking-tight">
-                        <FileText className="h-7 w-7 text-brand-400" /> Resumo do Contrato
+                <div className="relative z-10 min-w-0">
+                    <h3 className="flex items-center gap-2 sm:gap-3 text-xl sm:text-2xl font-black tracking-tight">
+                        <FileText className="h-6 w-6 sm:h-7 sm:w-7 shrink-0 text-brand-400" /> <span className="truncate">Resumo do Contrato</span>
                     </h3>
-                    <p className="mt-2 text-slate-300 font-medium">Verifique todos os detalhes da sua contratação abaixo.</p>
+                    <p className="mt-2 text-sm sm:text-base text-slate-300 font-medium truncate">Verifique todos os detalhes da sua contratação abaixo.</p>
                 </div>
             </div>
 
@@ -85,39 +85,39 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                         <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
                              <User className="h-5 w-5 text-slate-300" /> Dados do Titular
                         </h4>
-                        <div className="bg-slate-50 p-5 rounded-3xl border-2 border-slate-100 text-sm h-full">
+                        <div className="bg-slate-50 p-5 rounded-3xl border-2 border-slate-100 text-sm h-full overflow-hidden">
                             <dl className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-4">
-                                <div className="sm:col-span-2">
+                                <div className="sm:col-span-2 min-w-0">
                                     <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Nome Completo</dt>
-                                    <dd className="font-black text-slate-900 text-lg">{state.customer?.nome}</dd>
+                                    <dd className="font-black text-slate-900 text-lg break-words">{state.customer?.nome}</dd>
                                 </div>
                                 
-                                <div className="sm:col-span-2">
-                                    <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CPF</dt>
-                                    <dd className="font-bold text-slate-900">{state.customer?.cpfCnpj}</dd>
+                                <div className="sm:col-span-2 min-w-0">
+                                    <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">CPF/CNPJ</dt>
+                                    <dd className="font-bold text-slate-900 break-words">{state.customer?.cpfCnpj}</dd>
                                 </div>
 
-                                <div className="sm:col-span-2 pt-4 border-t border-slate-200/60 mt-2">
+                                <div className="sm:col-span-2 pt-4 border-t border-slate-200/60 mt-2 min-w-0">
                                     <dt className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Canais de Contato</dt>
                                     <dd className="space-y-2.5">
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-brand-50 p-1.5 rounded-lg">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="bg-brand-50 p-1.5 rounded-lg shrink-0">
                                                 <Phone className="h-4 w-4 text-brand-600" />
                                             </div>
-                                            <span className="font-bold text-slate-900">{state.customer?.celular}</span>
-                                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100">Principal</span>
+                                            <span className="font-bold text-slate-900 truncate">{state.customer?.celular}</span>
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-100 shrink-0">Principal</span>
                                         </div>
                                         {state.customer?.telefone && (
-                                            <div className="flex items-center gap-3">
-                                                <div className="bg-slate-100 p-1.5 rounded-lg">
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <div className="bg-slate-100 p-1.5 rounded-lg shrink-0">
                                                     <Phone className="h-4 w-4 text-slate-400" />
                                                 </div>
-                                                <span className="font-bold text-slate-600">{state.customer?.telefone}</span>
-                                                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">Secundário</span>
+                                                <span className="font-bold text-slate-600 truncate">{state.customer?.telefone}</span>
+                                                <span className="text-[10px] font-black uppercase tracking-wider text-slate-400 shrink-0">Secundário</span>
                                             </div>
                                         )}
-                                        <div className="flex items-center gap-3">
-                                            <div className="bg-slate-100 p-1.5 rounded-lg">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            <div className="bg-slate-100 p-1.5 rounded-lg shrink-0">
                                                 <Mail className="h-4 w-4 text-slate-400" />
                                             </div>
                                             <span className="font-bold text-slate-600 truncate">{state.customer?.email}</span>
@@ -131,8 +131,8 @@ export const StepReview = ({ onComplete }: StepReviewProps) => {
                         <h4 className="text-sm font-black uppercase text-slate-400 tracking-widest flex items-center gap-3">
                              <MapPin className="h-5 w-5 text-slate-300" /> Endereço de Instalação
                         </h4>
-                        <div className="bg-slate-50 p-5 rounded-3xl border-2 border-slate-100 text-sm h-full flex flex-col justify-center">
-                            <p className="font-black text-slate-900 text-xl mb-2 tracking-tight">
+                        <div className="bg-slate-50 p-5 rounded-3xl border-2 border-slate-100 text-sm h-full flex flex-col justify-center overflow-hidden">
+                            <p className="font-black text-slate-900 text-xl mb-2 tracking-tight break-words">
                                 {state.address?.logradouro}, {state.address?.numero}
                             </p>
                             {state.address?.complemento && (
