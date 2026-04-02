@@ -77,6 +77,10 @@ export const StepData = () => {
     const month = String(selected.getMonth() + 1).padStart(2, '0');
     const dayStr = String(day).padStart(2, '0');
     setDate(`${year}-${month}-${dayStr}`);
+    
+    setTimeout(() => {
+        document.getElementById('preferencia-horario')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 100);
   };
 
   const renderCalendar = () => {
@@ -343,7 +347,7 @@ export const StepData = () => {
                         </div>
 
                         {/* Time Selection */}
-                        <div className="flex-1 flex flex-col justify-center">
+                        <div id="preferencia-horario" className="flex-1 flex flex-col justify-center">
                             <label className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
                                 <Clock className="h-5 w-5 text-brand-500" />
                                 Preferência de Horário
@@ -368,7 +372,13 @@ export const StepData = () => {
                                             <button 
                                                 key={time} 
                                                 disabled={disabled}
-                                                onClick={() => {setSelectedTime(time); if(showErrors) setShowErrors(false);}}
+                                                onClick={() => {
+                                                    setSelectedTime(time); 
+                                                    if(showErrors) setShowErrors(false);
+                                                    setTimeout(() => {
+                                                        document.getElementById('melhor-dia-vencimento')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                                    }, 100);
+                                                }}
                                                 className={`
                                                     relative flex items-center justify-center gap-2 rounded-2xl border-2 px-4 py-5 text-base font-black transition-all duration-300
                                                     ${disabled ? 'opacity-50 cursor-not-allowed bg-slate-50 border-slate-200 text-slate-400' : 
@@ -407,7 +417,7 @@ export const StepData = () => {
                     
                     <div className="space-y-8">
                         {/* Due Date */}
-                        <div>
+                        <div id="melhor-dia-vencimento">
                             <label className="mb-4 block text-sm font-bold text-slate-700 flex items-center gap-2">
                                 <CalendarDays className="h-5 w-5 text-brand-500"/> 
                                 Melhor dia para vencimento
@@ -419,6 +429,9 @@ export const StepData = () => {
                                         onClick={() => {
                                             dispatch({type: 'SET_PAYMENT', payload: { method: state.paymentMethod, date: day } as any});
                                             if(showErrors) setShowErrors(false);
+                                            setTimeout(() => {
+                                                document.getElementById('forma-pagamento')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                                            }, 100);
                                         }}
                                         className={`flex h-14 w-14 items-center justify-center rounded-2xl border-2 font-black text-lg transition-all duration-300 ${state.dueDate === day ? 'border-brand-600 bg-brand-600 text-white shadow-lg shadow-brand-500/30 scale-110' : 'border-slate-200 bg-white text-slate-600 hover:border-brand-300 hover:bg-slate-50'}`}
                                     >
@@ -437,7 +450,7 @@ export const StepData = () => {
                             </div>
                         </div>
 
-                        <div className={`grid grid-cols-1 gap-5 sm:grid-cols-2 p-2 rounded-2xl ${showErrors && !state.paymentMethod ? 'border-2 border-red-500' : ''}`}>
+                        <div id="forma-pagamento" className={`grid grid-cols-1 gap-5 sm:grid-cols-2 p-2 rounded-2xl ${showErrors && !state.paymentMethod ? 'border-2 border-red-500' : ''}`}>
                             <div 
                                 onClick={() => {dispatch({type: 'SET_PAYMENT', payload: {method: 'credit_card', date: state.dueDate}}); if(showErrors) setShowErrors(false);}} 
                                 className={`cursor-pointer rounded-3xl border-2 p-6 transition-all duration-300 ${state.paymentMethod === 'credit_card' ? 'border-brand-500 bg-brand-50 shadow-md scale-[1.02]' : 'border-slate-200 bg-white hover:border-brand-300 hover:bg-slate-50'}`}

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'motion/react';
 import { Link } from 'react-router-dom';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const cn = (...classes: (string | undefined | null | false)[]) => classes.filter(Boolean).join(' ');
 
@@ -48,6 +49,14 @@ const PricingSwitch = ({ isFidelity, setIsFidelity, layoutIdPrefix }: { isFideli
 
 export const Planos = () => {
   const [isFidelity, setIsFidelity] = useState(true);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const scrollCarousel = (direction: 'left' | 'right') => {
+      if (carouselRef.current) {
+          const scrollAmount = carouselRef.current.clientWidth;
+          carouselRef.current.scrollBy({ left: direction === 'left' ? -scrollAmount : scrollAmount, behavior: 'smooth' });
+      }
+  };
 
   const plans = [
     {
@@ -124,20 +133,34 @@ export const Planos = () => {
 
         <PricingSwitch isFidelity={isFidelity} setIsFidelity={setIsFidelity} layoutIdPrefix="planos" />
 
-        <div className="grid lg:grid-cols-3 gap-6 items-center max-w-6xl mx-auto">
-          {plans.map((plan, index) => (
-            <motion.div
-              key={plan.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
-              className={`relative rounded-[32px] p-8 transition-all duration-300 flex flex-col h-full ${
-                plan.highlight 
-                  ? 'bg-bg-card border-2 border-brand-primary/50 shadow-[0_0_40px_rgba(0,123,255,0.15)] z-20 md:scale-105' 
-                  : 'bg-bg-base border border-text-primary/10 z-10'
-              }`}
-            >
+        <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4 lg:mx-auto lg:px-0 max-w-6xl">
+          <button 
+              onClick={() => scrollCarousel('left')}
+              className="lg:hidden absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-primary transition-all"
+          >
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
+          </button>
+          <button 
+              onClick={() => scrollCarousel('right')}
+              className="lg:hidden absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-primary transition-all"
+          >
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
+          </button>
+
+          <div ref={carouselRef} className="flex overflow-x-auto lg:grid lg:grid-cols-3 snap-x snap-mandatory gap-4 sm:gap-6 pb-8 pt-4 px-2 lg:px-0 hide-scrollbar w-full scroll-smooth items-center">
+            {plans.map((plan, index) => (
+              <motion.div
+                key={plan.id}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-50px" }}
+                transition={{ duration: 0.6, delay: index * 0.1, ease: [0.16, 1, 0.3, 1] }}
+                className={`relative rounded-[32px] p-8 transition-all duration-300 flex flex-col h-full w-full shrink-0 md:w-[calc(50%-12px)] lg:w-auto snap-start ${
+                  plan.highlight 
+                    ? 'bg-bg-card border-2 border-brand-primary/50 shadow-[0_0_40px_rgba(0,123,255,0.15)] z-20 lg:scale-105' 
+                    : 'bg-bg-base border border-text-primary/10 z-10'
+                }`}
+              >
               {plan.highlight && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-brand-badge to-orange-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider shadow-lg">
                   {plan.badge}
@@ -161,6 +184,7 @@ export const Planos = () => {
 
               <Link
                 to="/contratar"
+                state={{ planId: plan.id === 'maceta-pro' ? 1 : plan.id === 'maceta-plus' ? 2 : 3 }}
                 className={`w-full flex items-center justify-center rounded-xl py-4 text-lg font-bold transition-all duration-300 mb-8 ${
                   plan.highlight
                     ? 'bg-gradient-to-r from-brand-cta to-brand-cta-hover text-white shadow-[0_8px_32px_rgba(16,185,129,0.25)] hover:shadow-[0_8px_32px_rgba(16,185,129,0.4)] hover:-translate-y-0.5'
@@ -187,6 +211,7 @@ export const Planos = () => {
               </div>
             </motion.div>
           ))}
+          </div>
         </div>
       </div>
     </section>

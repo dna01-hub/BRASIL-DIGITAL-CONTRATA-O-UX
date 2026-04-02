@@ -3,7 +3,7 @@ import { useOrder } from '../OrderContext';
 import { Check, Star, CheckCircle2, Plus, Wifi, Zap, Shield, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Plan, AppOption, AdditionalService } from '../types';
 
-const plans: Plan[] = [
+export const plans: Plan[] = [
   // Vitrine
   { id: 1, name: 'MACETA PRO', speed: 500, price: 119.90, originalPrice: 159.90, features: ['Kaspersky', 'Ubook Go', '1 App PlayHub à escolha'], appsLimit: 1 },
   { id: 2, name: 'MACETA PLUS', speed: 700, price: 149.90, originalPrice: 199.90, features: ['Kaspersky', 'Ubook Go', 'Câmera BRD CAM inclusa'], appsLimit: 0, bestValue: true },
@@ -118,13 +118,13 @@ export const StepPlans = () => {
             <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4">
                 <button 
                     onClick={(e) => { e.stopPropagation(); scrollCarousel(plansCarouselRef, 'left'); }}
-                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                    className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                 >
                     <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
                 <button 
                     onClick={(e) => { e.stopPropagation(); scrollCarousel(plansCarouselRef, 'right'); }}
-                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                    className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-brand-600 hover:border-brand-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                 >
                     <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                 </button>
@@ -197,13 +197,13 @@ export const StepPlans = () => {
                             <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4">
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); scrollCarousel(appsCarouselRef, 'left'); }}
-                                    className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                    className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                                 >
                                     <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </button>
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); scrollCarousel(appsCarouselRef, 'right'); }}
-                                    className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                    className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-indigo-600 hover:border-indigo-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                                 >
                                     <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                                 </button>
@@ -220,9 +220,16 @@ export const StepPlans = () => {
                                                     if (!disabled) {
                                                         dispatch({type: 'TOGGLE_APP', payload: app});
                                                         if (showErrors) setShowErrors(false);
+                                                        
+                                                        // Auto-scroll to services if limit reached
+                                                        if (!isSelected && state.selectedApps.length + 1 >= (state.selectedPlan?.appsLimit || 0)) {
+                                                            setTimeout(() => {
+                                                                document.getElementById('servicos-adicionais')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                                                            }, 300);
+                                                        }
                                                     }
                                                 }}
-                                                className={`w-[calc(50%-8px)] shrink-0 md:w-[calc(25%-12px)] lg:w-[calc(16.666%-16px)] snap-start relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
+                                                className={`w-full shrink-0 sm:w-[calc(50%-8px)] md:w-[calc(25%-12px)] lg:w-[calc(16.666%-16px)] snap-start relative flex flex-col items-center justify-center gap-4 rounded-2xl border-2 p-5 transition-all duration-300 ${
                                                     isSelected 
                                                     ? 'border-indigo-500 bg-white shadow-[0_8px_30px_rgba(99,102,241,0.2)] scale-105' 
                                                     : disabled 
@@ -255,7 +262,7 @@ export const StepPlans = () => {
                     )}
 
                     {/* SERVICES */}
-                    <div className="rounded-3xl border border-violet-100 bg-violet-50/50 p-6 md:p-8">
+                    <div id="servicos-adicionais" className="rounded-3xl border border-violet-100 bg-violet-50/50 p-6 md:p-8">
                          <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
                             <div>
                                 <h4 className="text-xl font-black text-slate-900 tracking-tight">2. Serviços Adicionais (Opcional)</h4>
@@ -267,13 +274,13 @@ export const StepPlans = () => {
                          <div className="relative group/carousel -mx-2 sm:-mx-4 px-2 sm:px-4">
                             <button 
                                 onClick={(e) => { e.stopPropagation(); scrollCarousel(servicesCarouselRef, 'left'); }}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                className="absolute -left-3 sm:-left-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                             >
                                 <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
                             </button>
                             <button 
                                 onClick={(e) => { e.stopPropagation(); scrollCarousel(servicesCarouselRef, 'right'); }}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
+                                className="absolute -right-3 sm:-right-5 top-1/2 -translate-y-1/2 z-40 flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-full bg-white/90 backdrop-blur-md border border-slate-200 shadow-lg text-slate-600 hover:text-violet-600 hover:border-violet-300 transition-all opacity-100 md:opacity-0 md:group-hover/carousel:opacity-100"
                             >
                                 <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
                             </button>
@@ -284,7 +291,7 @@ export const StepPlans = () => {
                                         <div 
                                             key={svc.id}
                                             onClick={() => dispatch({type: 'TOGGLE_SERVICE', payload: svc})}
-                                            className={`w-full shrink-0 md:w-[calc(50%-10px)] snap-start cursor-pointer rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-[0_8px_30px_rgba(139,92,246,0.2)] scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
+                                            className={`w-full shrink-0 sm:w-[calc(50%-10px)] snap-start cursor-pointer rounded-2xl border-2 p-5 sm:p-6 transition-all duration-300 hover:shadow-xl ${isAdded ? 'border-violet-500 bg-white shadow-[0_8px_30px_rgba(139,92,246,0.2)] scale-[1.02]' : 'border-violet-100 bg-white/60 hover:border-violet-300 hover:-translate-y-1'}`}
                                         >
                                         <div className="flex justify-between items-start mb-4">
                                             <div className="p-3 rounded-xl bg-violet-100">

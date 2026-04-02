@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useOrder } from './OrderContext';
+import { plans } from './components/StepPlans';
 import { Sidebar } from './components/Sidebar';
 import { StepViability } from './components/StepViability';
 import { StepPlans } from './components/StepPlans';
@@ -10,6 +13,39 @@ import { ShieldCheck, Wifi } from 'lucide-react';
 
 const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
+  const location = useLocation();
+  const { dispatch, state } = useOrder();
+
+  useEffect(() => {
+    // Scroll to top on mount
+    window.scrollTo(0, 0);
+    
+    // Pre-select plan if passed in state
+    if (location.state?.planId && !state.selectedPlan) {
+      const planToSelect = plans.find(p => p.id === location.state.planId);
+      if (planToSelect) {
+        dispatch({ type: 'SET_PLAN', payload: planToSelect });
+      }
+    }
+  }, [location.state, dispatch, state.selectedPlan]);
+
+  // Auto-scroll to active step
+  useEffect(() => {
+    const stepElement = document.getElementById(`step-${state.step}`);
+    if (stepElement) {
+      // Wait for accordion animation to finish before calculating position
+      setTimeout(() => {
+        const headerOffset = 100; // Adjust for sticky header
+        const elementPosition = stepElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+        
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }, 550);
+    }
+  }, [state.step]);
 
   if (orderComplete) {
     return <SuccessScreen onReset={() => window.location.reload()} />;
@@ -64,11 +100,11 @@ const Checkout = () => {
           
           {/* Form Column - Accordion Flow */}
           <div className="lg:col-span-8 xl:col-span-8 space-y-6 min-w-0">
-            <StepViability />
-            <StepPlans />
-            <StepAnalysis />
-            <StepData />
-            <StepReview onComplete={() => setOrderComplete(true)} />
+            <div id="step-1"><StepViability /></div>
+            <div id="step-2"><StepPlans /></div>
+            <div id="step-3"><StepAnalysis /></div>
+            <div id="step-4"><StepData /></div>
+            <div id="step-5"><StepReview onComplete={() => setOrderComplete(true)} /></div>
           </div>
 
           {/* Sticky Sidebar */}
