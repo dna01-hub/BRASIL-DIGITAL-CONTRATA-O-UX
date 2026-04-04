@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useOrder } from './OrderContext';
 import { plans } from './components/StepPlans';
@@ -15,6 +15,7 @@ const Checkout = () => {
   const [orderComplete, setOrderComplete] = useState(false);
   const location = useLocation();
   const { dispatch, state } = useOrder();
+  const isInitialMount = useRef(true);
 
   useEffect(() => {
     // Scroll to top on mount
@@ -31,9 +32,14 @@ const Checkout = () => {
 
   // Auto-scroll to active step
   useEffect(() => {
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+      return;
+    }
+
     const stepElement = document.getElementById(`step-${state.step}`);
     if (stepElement) {
-      // Wait for accordion animation to finish before calculating position
+      // Wait for accordion animation to finish completely before calculating position
       setTimeout(() => {
         const headerOffset = 100; // Adjust for sticky header
         const elementPosition = stepElement.getBoundingClientRect().top;
@@ -43,7 +49,7 @@ const Checkout = () => {
           top: offsetPosition,
           behavior: 'smooth'
         });
-      }, 550);
+      }, 600);
     }
   }, [state.step]);
 
